@@ -5,11 +5,247 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CMCHIS Dashboard — Mayiladuthurai 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;500&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"
+  onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"
+  onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js'"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
+  onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'"></script>
+<!-- PDF.js loaded lazily on first PDF upload — no 404 on page load -->
+
+<!-- Firebase — with crossOrigin headers, CDN fallback chain, and silent degradation -->
+<script>
+(function() {
+  var LS_SNAPSHOT = 'cmchis_snapshot';
+  var LS_HISTORY  = 'cmchis_history';
+  function lsSave(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  function lsLoad(k)  { try{ var v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return null; } }
+
+  function setStorageStatus(mode, msg) {
+    window._storageMode = mode;
+    setTimeout(function() {
+      var el = document.getElementById('storageStatus');
+      if(!el) {
+        el = document.createElement('div');
+        el.id = 'storageStatus';
+        el.style.cssText = 'margin:8px 12px 0;padding:6px 10px;border-radius:8px;font-size:11px;font-weight:500;display:flex;align-items:center;gap:6px';
+        var footer = document.querySelector('.sidebar-footer');
+        if(footer) footer.parentNode.insertBefore(el, footer);
+      }
+      var bg = mode==='firebase' ? 'background:#e6f4ea;color:#137333'
+             : mode==='local'    ? 'background:#fef7e0;color:#f29900'
+             :                     'background:#f1f3f4;color:#5f6368';
+      var ic = mode==='firebase' ? '☁️' : mode==='local' ? '💾' : '⚠️';
+      el.style.cssText = 'margin:8px 12px 0;padding:6px 10px;border-radius:8px;font-size:11px;font-weight:500;display:flex;align-items:center;gap:6px;' + bg;
+      el.innerHTML = '<span>'+ic+'</span><span>'+msg+'</span>';
+    }, 700);
+  }
+
+  // ── localStorage-only implementation (always safe) ──
+  var localImpl = {
+    saveImport: function(rows, meta) {
+      var hist = lsLoad(LS_HISTORY)||[];
+      hist.unshift({timestamp:new Date().toISOString(),rowCount:rows.length,
+        months:meta.months,depts:meta.depts,rows:rows,fromCloud:false});
+      lsSave(LS_HISTORY, hist.slice(0,50));
+      return Promise.resolve();
+    },
+    saveSnapshot: function(ds, dm) {
+      lsSave(LS_SNAPSHOT,{savedAt:new Date().toISOString(),months:dm,data:ds});
+      return Promise.resolve();
+    },
+    loadSnapshot:      function(){ return Promise.resolve(lsLoad(LS_SNAPSHOT)); },
+    loadImportHistory: function(){ return Promise.resolve(lsLoad(LS_HISTORY)||[]); }
+  };
+
+  function useFallback() {
+    if(window._fb) return; // already set
+    window._fb = localImpl;
+    setStorageStatus('local','Local storage only');
+    wirePageLoad();
+  }
+
+  // Set localStorage as default immediately — Firebase will upgrade it if available
+  window._fb = localImpl;
+
+  function wirePageLoad() {
+    if(window._fbWired) return;
+    window._fbWired = true;
+    window.addEventListener('DOMContentLoaded', function() {
+      window._fb.loadSnapshot().then(function(snapshot) {
+        if(snapshot && snapshot.months && snapshot.data)
+          setTimeout(function(){ if(typeof applyFirebaseSnapshot==='function') applyFirebaseSnapshot(snapshot); }, 800);
+        else
+          setStorageStatus(window._storageMode||'local', window._storageMode==='firebase' ? 'Firebase connected' : 'Local storage only');
+      }).catch(function(){});
+      window._fb.loadImportHistory().then(function(hist) {
+        if(hist && hist.length)
+          setTimeout(function(){ if(typeof renderFirebaseHistory==='function') renderFirebaseHistory(hist); }, 900);
+      }).catch(function(){});
+    });
+  }
+
+  // Wire immediately so page load always fires even if Firebase never loads
+  wirePageLoad();
+
+  // ── Load Firebase scripts with crossOrigin + multi-CDN fallback ──
+  var FB_VERSION = '10.12.0';
+  var BASES = [
+    'https://www.gstatic.com/firebasejs/' + FB_VERSION + '/',
+    'https://cdn.jsdelivr.net/npm/firebase@' + FB_VERSION + '/',
+    'https://unpkg.com/firebase@' + FB_VERSION + '/'
+  ];
+  var PKGS = ['firebase-app-compat.js','firebase-firestore-compat.js','firebase-auth-compat.js'];
+  var FB_CONFIG = {
+    apiKey:            'AIzaSyDoqkHFfk96z2DfCIcg4w8p6KDX5cmrKVI',
+    authDomain:        'mydimr.firebaseapp.com',
+    projectId:         'mydimr',
+    storageBucket:     'mydimr.firebasestorage.app',
+    messagingSenderId: '697537796605',
+    appId:             '1:697537796605:web:271037754feb0426d02194',
+    measurementId:     'G-6DXSTW7Z31'
+  };
+
+  function loadScripts(base, callback) {
+    var loaded = 0;
+    var errored = false;
+    PKGS.forEach(function(pkg) {
+      var s = document.createElement('script');
+      s.src = base + pkg;
+      s.crossOrigin = 'anonymous';           // ← prevents "Script error." masking
+      s.async = false;                        // maintain load order
+      s.onload = function() {
+        loaded++;
+        if(loaded === PKGS.length) callback(true);
+      };
+      s.onerror = function() {
+        if(errored) return;
+        errored = true;
+        callback(false);
+      };
+      document.head.appendChild(s);
+    });
+  }
+
+  function tryBase(idx) {
+    if(idx >= BASES.length) {
+      setStorageStatus('local','Local storage only');
+      return;
+    }
+    loadScripts(BASES[idx], function(ok) {
+      if(!ok) { tryBase(idx + 1); return; }
+      try {
+        if(typeof firebase === 'undefined') { tryBase(idx + 1); return; }
+
+        // ── Silence ALL Firestore internal logs (WebChannel noise, offline warnings) ──
+        if(firebase.firestore && firebase.firestore.setLogLevel) {
+          firebase.firestore.setLogLevel('silent');
+        }
+
+        if(!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+        var db   = firebase.firestore();
+        var auth = firebase.auth();
+
+        // ── Enable offline persistence so Firestore works without network ──
+        db.enablePersistence({ synchronizeTabs: false })
+          .catch(function() {}); // ignore — fails harmlessly in some environments
+
+        auth.signInAnonymously()
+          .then(function() { activateFirebase(db); })
+          .catch(function() { activateFirebase(db); }); // proceed even if auth fails
+
+      } catch(e) {
+        tryBase(idx + 1);
+      }
+    });
+  }
+
+  function activateFirebase(db) {
+    // ── Detect online/offline and update status badge ──
+    function updateOnlineStatus() {
+      var online = navigator.onLine;
+      setStorageStatus(online ? 'firebase' : 'local',
+                       online ? 'Firebase ready' : 'Offline · local storage');
+    }
+    window.addEventListener('online',  updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
+    window._fb = {
+      saveImport: function(rows, meta) {
+        localImpl.saveImport(rows, meta); // always persist locally first
+        if(!navigator.onLine) {
+          if(typeof showToast==='function') showToast('💾 Saved locally (offline)');
+          return Promise.resolve();
+        }
+        return db.collection('imports').add({
+          timestamp: new Date().toISOString(), rowCount: rows.length,
+          months: meta.months, depts: meta.depts, rows: rows
+        }).then(function() {
+          if(typeof showToast==='function') showToast('☁️ Saved to Firebase');
+        }).catch(function() {
+          if(typeof showToast==='function') showToast('💾 Saved locally (sync pending)');
+        });
+      },
+
+      saveSnapshot: function(ds, dm) {
+        var payload = { savedAt: new Date().toISOString(), months: dm, data: ds };
+        lsSave(LS_SNAPSHOT, payload); // local always
+        return db.collection('snapshots').doc('latest').set(payload).catch(function() {});
+      },
+
+      loadSnapshot: function() {
+        return db.collection('snapshots').doc('latest').get({ source: 'cache' })
+          .catch(function() {
+            // Cache miss — try network
+            return db.collection('snapshots').doc('latest').get();
+          })
+          .then(function(snap) {
+            if(snap && snap.exists) {
+              setStorageStatus('firebase', navigator.onLine ? 'Synced · Firebase' : 'Offline · cached');
+              return snap.data();
+            }
+            var local = lsLoad(LS_SNAPSHOT);
+            setStorageStatus(local ? 'local' : 'firebase', local ? 'Saved locally' : 'Firebase ready');
+            return local;
+          })
+          .catch(function() {
+            var local = lsLoad(LS_SNAPSHOT);
+            setStorageStatus('local', local ? 'Saved locally' : 'Local only');
+            return local;
+          });
+      },
+
+      loadImportHistory: function() {
+        return db.collection('imports').orderBy('timestamp', 'desc').get({ source: 'cache' })
+          .catch(function() {
+            return db.collection('imports').orderBy('timestamp', 'desc').get();
+          })
+          .then(function(snap) {
+            if(snap && !snap.empty) return snap.docs.map(function(d) { return Object.assign({ id: d.id, fromCloud: true }, d.data()); });
+            return lsLoad(LS_HISTORY) || [];
+          })
+          .catch(function() { return lsLoad(LS_HISTORY) || []; });
+      }
+    };
+
+    // Re-run with Firebase now active
+    window._fb.loadSnapshot().then(function(snapshot) {
+      if(snapshot && snapshot.months && snapshot.data)
+        setTimeout(function(){ if(typeof applyFirebaseSnapshot==='function') applyFirebaseSnapshot(snapshot); }, 400);
+      else
+        updateOnlineStatus();
+    }).catch(function(){ updateOnlineStatus(); });
+
+    window._fb.loadImportHistory().then(function(hist) {
+      if(hist && hist.length)
+        setTimeout(function(){ if(typeof renderFirebaseHistory==='function') renderFirebaseHistory(hist); }, 500);
+    }).catch(function(){});
+  }
+
+  // Kick off loading after page renders
+  setTimeout(function(){ tryBase(0); }, 100);
+})();
+</script><style>
 :root {
   --blue:#1a73e8; --blue-light:#e8f0fe; --blue-mid:#4285f4;
   --green:#34a853; --green-light:#e6f4ea; --green-dark:#137333;
@@ -2925,49 +3161,82 @@ function parseExcel(arrayBuffer, filename) {
   } catch(e) { return {error:'Excel parse error: '+e.message}; }
 }
 
-// ─── PDF Parser (PDF.js) ───
+// ─── PDF Parser — lazy-loads PDF.js only when a PDF is actually selected ───
+const PDFJS_VERSION = '3.11.174';
+const PDFJS_CDN_PRIMARY = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/build/pdf.min.js`;
+const PDFJS_CDN_WORKER  = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.min.js`;
+const PDFJS_CDN_FALLBK  = `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/build/pdf.min.js`;
+const PDFJS_WRK_FALLBK  = `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.min.js`;
+
+let _pdfJsLoaded = false;
+
+function loadPdfJs() {
+  if(_pdfJsLoaded && typeof pdfjsLib !== 'undefined') return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = PDFJS_CDN_PRIMARY;
+    script.onload = () => { _pdfJsLoaded = true; resolve(); };
+    script.onerror = () => {
+      // Try fallback
+      const s2 = document.createElement('script');
+      s2.src = PDFJS_CDN_FALLBK;
+      s2.onload = () => { _pdfJsLoaded = true; resolve(); };
+      s2.onerror = () => reject(new Error('PDF.js could not be loaded from any CDN. Check your internet connection.'));
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(script);
+  });
+}
+
 async function parsePDF(arrayBuffer) {
-  if(typeof pdfjsLib === 'undefined') return {error:'PDF library not loaded — please try again'};
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   try {
+    showProcessing('Loading PDF library…');
+    await loadPdfJs();
+    if(typeof pdfjsLib === 'undefined') return {error:'PDF.js failed to load'};
+
+    // Set worker — try primary, fall back to fake worker (slower but works offline)
+    if(!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_CDN_WORKER;
+    }
+
+    showProcessing('Extracting text from PDF…');
     const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
     let fullText = '';
-    for(let p=1; p<=pdf.numPages; p++) {
+    for(let p = 1; p <= pdf.numPages; p++) {
       const page = await pdf.getPage(p);
       const content = await page.getTextContent();
       // Reconstruct lines by grouping items with similar Y positions
-      const items = content.items.map(i=>({text:i.str, y:Math.round(i.transform[5]), x:Math.round(i.transform[4])}));
+      const items = content.items.map(i => ({text: i.str, y: Math.round(i.transform[5]), x: Math.round(i.transform[4])}));
       const yGroups = {};
-      items.forEach(item=>{
-        if(!yGroups[item.y]) yGroups[item.y]=[];
+      items.forEach(item => {
+        if(!yGroups[item.y]) yGroups[item.y] = [];
         yGroups[item.y].push(item);
       });
-      const sortedYs = Object.keys(yGroups).map(Number).sort((a,b)=>b-a);
-      for(const y of sortedYs){
-        const lineItems = yGroups[y].sort((a,b)=>a.x-b.x);
-        fullText += lineItems.map(i=>i.text).join('\t') + '\n';
+      const sortedYs = Object.keys(yGroups).map(Number).sort((a, b) => b - a);
+      for(const y of sortedYs) {
+        const lineItems = yGroups[y].sort((a, b) => a.x - b.x);
+        fullText += lineItems.map(i => i.text).join('\t') + '\n';
       }
     }
 
-    // Strategy 1: detect structured table (tab-separated lines with numbers)
-    const lines = fullText.split('\n').filter(l=>l.trim());
+    // Strategy 1: detect structured table (tab-separated lines with header)
+    const lines = fullText.split('\n').filter(l => l.trim());
     const headerIdx = lines.findIndex(l => {
       const lower = l.toLowerCase();
-      return (lower.includes('department')||lower.includes('dept')) &&
-             (lower.includes('applied')||lower.includes('approved')||lower.includes('month'));
+      return (lower.includes('department') || lower.includes('dept')) &&
+             (lower.includes('applied') || lower.includes('approved') || lower.includes('month'));
     });
 
     if(headerIdx >= 0) {
-      // Build a CSV from PDF table rows and use TSV parser
       const tableLines = lines.slice(headerIdx);
-      const csvText = tableLines.map(l=>l.replace(/\t+/g,',')).join('\n');
+      const csvText = tableLines.map(l => l.replace(/\t+/g, ',')).join('\n');
       const result = parseCSV(csvText);
       if(!result.error && result.rows.length > 0) return result;
     }
 
-    // Strategy 2: look for month labels as row starters and parse numeric columns
+    // Strategy 2: look for month labels as section headers, dept names as rows
     const monthRe = /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[\s\-]*(\d{2,4})/i;
-    const deptRe = new RegExp('('+DEPTS.join('|')+')', 'i');
+    const deptRe = new RegExp('(' + DEPTS.join('|') + ')', 'i');
     const rows = [];
     let currentMonth = null;
     for(const line of lines) {
@@ -2976,23 +3245,25 @@ async function parsePDF(arrayBuffer) {
       if(!currentMonth) continue;
       const dMatch = line.match(deptRe);
       if(dMatch) {
-        const nums = (line.match(/\d[\d,]*/g)||[]).map(n=>parseInt(n.replace(/,/g,''))||0);
+        const nums = (line.match(/\d[\d,]*/g) || []).map(n => parseInt(n.replace(/,/g, '')) || 0);
         if(nums.length >= 3) {
           rows.push({
             department: dMatch[1].toUpperCase(),
             month: currentMonth,
-            applied: nums[0]||0,
-            approved: nums[1]||0,
-            denied: nums[2]||0,
-            amount: nums[3]||0
+            applied: nums[0] || 0,
+            approved: nums[1] || 0,
+            denied: nums[2] || 0,
+            amount: nums[3] || 0
           });
         }
       }
     }
     if(rows.length > 0) return {rows};
 
-    return {error:`Could not find a recognisable data table in this PDF.\n\nExtracted ${pdf.numPages} page(s) of text. For best results, use a machine-generated PDF (CMCHIS portal export) rather than a scanned document. Alternatively, copy the table from PDF and use the "Paste CSV" tab.`};
-  } catch(e) { return {error:'PDF read error: '+e.message}; }
+    return {error: `Could not find a recognisable data table in this PDF (${pdf.numPages} page${pdf.numPages>1?'s':''} scanned).\n\nTip: Works best with digital PDFs from the CMCHIS portal. For scanned documents, copy-paste the table into the Paste CSV tab instead.`};
+  } catch(e) {
+    return {error: 'PDF read error: ' + e.message};
+  }
 }
 
 // ─── Paste handler ───
@@ -3049,8 +3320,18 @@ function applyImport() {
 
   // Record history
   const ts = new Date().toLocaleString('en-IN');
-  importHistory.unshift({ts, rows:rows.length, months:newMonths.join(', '), depts: [...new Set(rows.map(r=>r.department))].join(', ')});
+  const meta = {
+    months: newMonths.join(', '),
+    depts: [...new Set(rows.map(r=>r.department))].join(', ')
+  };
+  importHistory.unshift({ts, rows:rows.length, ...meta});
   renderImportHistory();
+
+  // ── Save to Firestore ──
+  if(window._fb) {
+    window._fb.saveImport(rows, meta);
+    window._fb.saveSnapshot(DATA_STORE, DATA_MONTHS);
+  }
 
   closeImport();
   pendingImportRows = null;
@@ -3152,10 +3433,13 @@ function renderImportHistory() {
     <div class="import-hist-item">
       <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
       <div>
-        <div style="font-weight:500">${h.rows} rows · Months: ${h.months}</div>
-        <div style="color:var(--grey6);font-size:11px">Depts: ${h.depts}</div>
+        <div style="font-weight:500">${h.rows||h.rowCount||0} rows · Months: ${h.months||'—'}</div>
+        <div style="color:var(--grey6);font-size:11px">Depts: ${h.depts||'—'}</div>
       </div>
-      <span class="hist-time">${h.ts}</span>
+      <span style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+        <span class="hist-time">${h.ts||h.timestamp||''}</span>
+        <span style="font-size:10px;padding:1px 6px;border-radius:6px;${h.fromCloud?'background:#e8f0fe;color:#1a73e8':'background:#fef7e0;color:#f29900'}">${h.fromCloud?'☁️ Firebase':'💾 Local'}</span>
+      </span>
     </div>`).join('');
 }
 
@@ -3180,6 +3464,78 @@ function downloadTemplate(fmt) {
     a.download='CMCHIS_Import_Template.csv';
     a.click();
   }
+}
+
+// ══════════════════════════════════════════════
+// ═══  FIREBASE SNAPSHOT RESTORE & HISTORY  ═══
+// ══════════════════════════════════════════════
+
+// Called by Firebase module after DOMContentLoaded if a saved snapshot exists
+function applyFirebaseSnapshot(snapshot) {
+  try {
+    const months = snapshot.months;
+    const data   = snapshot.data;
+    if(!months || !data) return;
+
+    // Merge months
+    months.forEach(m => {
+      if(!DATA_MONTHS.includes(m)) DATA_MONTHS.push(m);
+    });
+
+    // Merge departments and values
+    Object.keys(data).forEach(dept => {
+      if(!DEPTS.includes(dept)) {
+        DEPTS.push(dept);
+        COLORS.push('#'+(Math.random()*0xFFFFFF<<0).toString(16).padStart(6,'0'));
+        PALE.push('#f5f5f5');
+      }
+      // Ensure DATA_STORE array is correct length
+      DATA_STORE[dept] = DATA_MONTHS.map((m,mi) => {
+        const snapshotVal = data[dept]?.[mi];
+        const existingVal = DATA_STORE[dept]?.[mi];
+        // Prefer snapshot value if it's defined and non-zero, otherwise keep existing
+        return (snapshotVal !== undefined && snapshotVal !== null) ? snapshotVal : (existingVal || 0);
+      });
+    });
+
+    // Refresh all charts with restored data
+    refreshAllCharts();
+
+    // Show a subtle toast
+    showToast('✅ Dashboard restored from last saved state (Firebase)');
+  } catch(e) {
+    console.warn('applyFirebaseSnapshot error:', e);
+  }
+}
+
+// Renders Firebase import history (cloud records) into the History tab
+function renderFirebaseHistory(hist) {
+  importHistory = hist.map(h => ({
+    ts: h.timestamp ? new Date(h.timestamp).toLocaleString('en-IN') : '—',
+    rows: h.rowCount || (h.rows||[]).length,
+    months: h.months || '—',
+    depts: h.depts || '—',
+    fromCloud: true
+  }));
+  renderImportHistory();
+}
+
+// Simple toast notification
+function showToast(msg) {
+  let t = document.getElementById('fbToast');
+  if(!t) {
+    t = document.createElement('div');
+    t.id = 'fbToast';
+    t.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      background:#202124;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;
+      z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);opacity:0;transition:opacity .3s;
+      white-space:nowrap;max-width:90vw;text-align:center`;
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>{ t.style.opacity='0'; }, 4000);
 }
 </script>
 </body>
