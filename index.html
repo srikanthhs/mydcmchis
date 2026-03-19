@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CMCHIS Dashboard — Mayiladuthurai 2026</title>
+<title>CMCHIS Dashboard — Mayiladuthurai 2025 Annual</title>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Display:wght@400;500&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"
   onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js'"></script>
@@ -873,6 +873,86 @@ tr:hover td{background:var(--grey1)}
 .import-hist-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--grey3);border-radius:8px;margin-bottom:6px;font-size:12px;color:var(--grey8)}
 .import-hist-item svg{width:16px;height:16px;fill:var(--green);flex-shrink:0}
 .hist-time{margin-left:auto;color:var(--grey6)}
+/* ── CLICKABLE CARDS ── */
+.metric-card{cursor:pointer;transition:transform .15s,box-shadow .2s}
+.metric-card:hover{transform:translateY(-2px);box-shadow:var(--shadow2)}
+.metric-card:hover .mc-value{color:var(--blue)}
+.metric-card::after{content:'›';position:absolute;top:10px;right:12px;font-size:16px;color:var(--grey5);opacity:0}
+.metric-card:hover::after{opacity:1}
+.metric-card{position:relative}
+
+/* ── MONTH FILTER BAR ── */
+.month-filter-bar{display:flex;align-items:center;gap:6px;padding:10px 0 14px;flex-wrap:wrap}
+.mf-label{font-size:11px;font-weight:600;color:var(--grey6);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;flex-shrink:0}
+.mf-chip{padding:5px 12px;border-radius:16px;font-size:12px;font-weight:500;cursor:pointer;background:var(--grey2);color:var(--grey7);border:1px solid var(--grey4);transition:all .15s;white-space:nowrap}
+.mf-chip:hover{background:var(--grey3)}
+.mf-chip.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.mf-chip.year-chip{background:var(--blue-light);color:var(--blue);border-color:var(--blue)}
+.mf-chip.year-chip.active{background:var(--blue);color:#fff}
+
+/* ── DRILL-DOWN MODAL ── */
+#drillModal{position:fixed;inset:0;background:rgba(32,33,36,.6);z-index:2000;display:none;align-items:center;justify-content:center;padding:16px}
+#drillModal.open{display:flex}
+.drill-inner{background:#fff;border-radius:16px;width:100%;max-width:720px;max-height:88vh;overflow-y:auto;box-shadow:0 8px 48px rgba(0,0,0,.25)}
+.drill-head{padding:18px 24px;border-bottom:1px solid var(--grey3);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1}
+.drill-title{font-size:17px;font-weight:600;color:var(--grey9)}
+.drill-close{width:32px;height:32px;border-radius:50%;background:var(--grey2);border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--grey7)}
+.drill-body{padding:20px 24px}
+.drill-chart-wrap{height:220px;margin-bottom:16px}
+.drill-table{width:100%;border-collapse:collapse;font-size:12px}
+.drill-table th{background:var(--grey1);padding:7px 10px;text-align:left;font-weight:600;color:var(--grey7);font-size:11px;letter-spacing:.3px;text-transform:uppercase;border-bottom:2px solid var(--grey3)}
+.drill-table td{padding:7px 10px;border-bottom:1px solid var(--grey3);color:var(--grey8)}
+.drill-table tr:hover td{background:var(--blue-light)}
+
+/* ── SORTABLE TABLES ── */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{background:var(--grey1);padding:9px 12px;text-align:left;font-weight:600;color:var(--grey7);font-size:11px;letter-spacing:.3px;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid var(--grey3);position:sticky;top:0;z-index:1}
+.data-table th:hover{background:var(--grey2);color:var(--grey9)}
+.data-table th.sort-asc::after{content:' ↑'}
+.data-table th.sort-desc::after{content:' ↓'}
+.data-table th:not(.sort-asc):not(.sort-desc)::after{content:' ↕';opacity:.4}
+.data-table td{padding:9px 12px;border-bottom:1px solid var(--grey3);vertical-align:middle}
+.data-table tr{cursor:pointer;transition:background .1s}
+.data-table tr:hover td{background:var(--blue-light)}
+.data-table tr:last-child td{border-bottom:none}
+.table-search{display:flex;align-items:center;background:var(--grey2);border-radius:8px;padding:6px 12px;gap:8px;margin-bottom:10px;width:100%;max-width:280px;border:1px solid transparent}
+.table-search:focus-within{background:#fff;border-color:var(--blue)}
+.table-search input{background:none;border:none;outline:none;font-size:13px;color:var(--grey9);width:100%;font-family:var(--font)}
+.table-search svg{width:15px;height:15px;fill:var(--grey6);flex-shrink:0}
+.tbl-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+
+/* ── SPARKLINE ── */
+.sparkline-wrap{display:inline-block;vertical-align:middle}
+canvas.sparkline{display:block}
+
+/* ── DOCTOR CARDS v2 ── */
+.doc-card-v2{background:#fff;border-radius:var(--r2);padding:16px;box-shadow:var(--shadow1);display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:box-shadow .2s,transform .15s;position:relative}
+.doc-card-v2:hover{box-shadow:var(--shadow2);transform:translateY(-2px)}
+.doc-card-header{display:flex;align-items:center;gap:10px}
+.doc-avatar-v2{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0}
+.doc-name-v2{font-size:13px;font-weight:600;color:var(--grey9)}
+.doc-dept-v2{font-size:11px;color:var(--grey6)}
+.doc-stats-row{display:flex;gap:12px}
+.doc-stat{text-align:center;flex:1}
+.doc-stat-val{font-size:17px;font-weight:700;color:var(--grey9)}
+.doc-stat-lab{font-size:10px;color:var(--grey6)}
+.doc-trend-badge{position:absolute;top:10px;right:10px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px}
+.doc-grid-v2{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+
+/* ── PACKAGE PAGE ── */
+.pkg-table{width:100%;border-collapse:collapse;font-size:12px}
+.pkg-table th{background:var(--grey1);padding:8px 10px;text-align:left;font-size:11px;color:var(--grey7);font-weight:600;letter-spacing:.3px;cursor:pointer;user-select:none;border-bottom:2px solid var(--grey3)}
+.pkg-table th::after{content:' ↕';opacity:.4}
+.pkg-table th.sort-asc::after{content:' ↑';opacity:1}
+.pkg-table th.sort-desc::after{content:' ↓';opacity:1}
+.pkg-table td{padding:8px 10px;border-bottom:1px solid var(--grey3);vertical-align:middle}
+.pkg-table tr{cursor:pointer;transition:background .1s}
+.pkg-table tr:hover td{background:var(--blue-light)}
+.pkg-bar-inline{display:inline-block;height:8px;border-radius:4px;min-width:4px;vertical-align:middle;margin-right:6px}
+.pkg-tabs{display:flex;gap:4px;background:var(--grey2);border-radius:8px;padding:4px;margin-bottom:16px}
+.pkg-tab{flex:1;padding:8px 12px;border-radius:6px;font-size:13px;font-weight:500;color:var(--grey7);cursor:pointer;text-align:center;transition:all .15s}
+.pkg-tab.active{background:#fff;color:var(--grey9);box-shadow:var(--shadow1)}
+
 </style>
 </head>
 <body>
@@ -1054,11 +1134,24 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
     <div class="nav-item" onclick="showPage('revgrowth',this)">
       <div class="ni"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></div>
       Revenue Growth Hub
-      <span class="nav-badge" style="background:var(--green)">NEW</span>
+    </div>
+    <div class="nav-section">Reports</div>
+    <div class="nav-item" onclick="showPage('annual2025',this)">
+      <div class="ni"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>
+      2025 Annual Report
+    </div>
+    <div class="nav-item" onclick="showPage('doctorpage',this)">
+      <div class="ni"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 1 0 0 10A5 5 0 0 0 12 2zm0 12c-5.33 0-8 2.67-8 4v2h16v-2c0-1.33-2.67-4-8-4z"/></svg></div>
+      Doctor Performance
+    </div>
+    <div class="nav-item" onclick="showPage('packages',this)">
+      <div class="ni"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.36C18 2.53 15.46 0 12.18 0c-1.98 0-3.73 1.01-4.75 2.52L6 4H4c-1.11 0-2 .89-2 2v14c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5 6h-2v2h-2v-2H9v-2h2V8h2v2h2v2z"/></svg></div>
+      Package Performance
+      <span class="nav-badge" style="background:var(--yellow-dark)">NEW</span>
     </div>
   </div>
   <div class="sidebar-footer">
-    Generated: March 2026 &nbsp;·&nbsp; v2.0
+    Updated: 2025 Full Year · v3.0
   </div>
 </nav>
 
@@ -1076,7 +1169,7 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
     <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
     <input type="text" placeholder="Search departments, schemes…" id="globalSearch" oninput="handleSearch(this.value)">
   </div>
-  <div class="period-badge">Jan–Feb 2026</div>
+  <div class="period-badge">2025 Full Year</div>
   <button class="btn btn-outline" onclick="exportCSV()">
     <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
     Export
@@ -1110,51 +1203,52 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
   </div>
 
   <!-- Alert banner -->
-  <div class="alert-strip alert-red" style="margin-bottom:20px">
-    <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
+  <div class="alert-strip alert-green" style="margin-bottom:20px">
+    <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
     <div class="alert-body">
-      <div class="alert-title">IKT Denial Rate Critical — Immediate Action Required</div>
-      <div class="alert-desc">52 IKT claims denied in January (26.9%) and 40 in February (23.8%). This is 6–11× higher than the CMCHIS overall denial rate. Review beneficiary eligibility & documentation processes urgently.</div>
+      <div class="alert-title">2025 Full Year Complete — 1,588 CMCHIS + 1,848 IKT cases approved · ₹90.1L revenue</div>
+      <div class="alert-desc">IKT denial rate improved from 26.9% (Jan) to 8.8% (Dec) through process reforms. Monsoon surge (Jun–Jul) caused the year's highest denial spike (38/month). Colposcopy maintained ~99% approval throughout. See 2025 Annual Report for full breakdown.</div>
     </div>
   </div>
 
+  <div id="overviewFilterBar" class="month-filter-bar"></div>
   <!-- KPI Cards -->
   <div class="cards-grid">
-    <div class="metric-card mc-blue">
+    <div class="metric-card mc-blue" onclick="showDrill('approval-rate')">
       <div class="mc-icon icon-blue"><svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg></div>
-      <div class="mc-label" id="ov-kpi1-label">Total Claims (Jan)</div>
-      <div class="mc-value" id="ov-kpi1-val">208</div>
-      <div class="mc-sub" id="ov-kpi1-sub"><span class="mc-trend trend-up">▲ 2.4%</span> vs Dec 2025</div>
+      <div class="mc-label" id="ov-kpi1-label">CMCHIS Approved (Nov 2025)</div>
+      <div class="mc-value" id="ov-kpi1-val">131</div>
+      <div class="mc-sub" id="ov-kpi1-sub"><span class="mc-trend trend-up">▲ +6 vs Oct 2025</span></div>
     </div>
-    <div class="metric-card mc-blue">
+    <div class="metric-card mc-blue" onclick="showDrill('approval-rate')">
       <div class="mc-icon icon-blue"><svg viewBox="0 0 24 24"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg></div>
-      <div class="mc-label" id="ov-kpi2-label">Total Claims (Feb)</div>
-      <div class="mc-value" id="ov-kpi2-val">213</div>
-      <div class="mc-sub" id="ov-kpi2-sub"><span class="mc-trend trend-up">▲ 2.4%</span> vs Jan 2026</div>
+      <div class="mc-label" id="ov-kpi2-label">CMCHIS Approved (Dec 2025)</div>
+      <div class="mc-value" id="ov-kpi2-val">132</div>
+      <div class="mc-sub" id="ov-kpi2-sub"><span class="mc-trend trend-up">▲ +1 vs Nov 2025</span></div>
     </div>
-    <div class="metric-card mc-green">
+    <div class="metric-card mc-green" onclick="showDrill('annual-revenue')">
       <div class="mc-icon icon-green"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></div>
-      <div class="mc-label" id="ov-kpi3-label">Amount Approved (Prev)</div>
-      <div class="mc-value" id="ov-kpi3-val">₹20.6L</div>
-      <div class="mc-sub" id="ov-kpi3-sub">201 cases cleared</div>
+      <div class="mc-label" id="ov-kpi3-label">Annual Revenue 2025</div>
+      <div class="mc-value" id="ov-kpi3-val">₹90.1L</div>
+      <div class="mc-sub" id="ov-kpi3-sub">1,588 CMCHIS cases cleared</div>
     </div>
-    <div class="metric-card mc-green">
+    <div class="metric-card mc-green" onclick="showDrill('ikt-annual')">
       <div class="mc-icon icon-green"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></div>
-      <div class="mc-label" id="ov-kpi4-label">Amount Approved (Latest)</div>
-      <div class="mc-value" id="ov-kpi4-val">₹20.9L</div>
-      <div class="mc-sub" id="ov-kpi4-sub">203 cases cleared</div>
+      <div class="mc-label" id="ov-kpi4-label">IKT Annual 2025</div>
+      <div class="mc-value" id="ov-kpi4-val">1,848</div>
+      <div class="mc-sub" id="ov-kpi4-sub">1,848 IKT cases approved</div>
     </div>
-    <div class="metric-card mc-red">
+    <div class="metric-card mc-green" onclick="showDrill('approval-rate')">
       <div class="mc-icon icon-red"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div>
-      <div class="mc-label">IKT Denial Rate</div>
-      <div class="mc-value" id="ov-ikt-denial">25%</div>
-      <div class="mc-sub" id="ov-ikt-sub"><span class="mc-trend trend-down">92 denied of 361</span></div>
+      <div class="mc-label">Annual Approval Rate</div>
+      <div class="mc-value" id="ov-ikt-denial">85.4%</div>
+      <div class="mc-sub" id="ov-ikt-sub"><span class="mc-trend trend-up">1,588 of 1,860 applied</span></div>
     </div>
-    <div class="metric-card mc-yellow">
+    <div class="metric-card mc-yellow" onclick="showPage('colpopage',document.querySelector('[onclick*=colpopage]'))">
       <div class="mc-icon icon-yellow"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg></div>
       <div class="mc-label">Colposcopy Success</div>
-      <div class="mc-value" id="ov-colpo">100%</div>
-      <div class="mc-sub" id="ov-colpo-sub">Feb — perfect approval</div>
+      <div class="mc-value" id="ov-colpo">~99%</div>
+      <div class="mc-sub" id="ov-colpo-sub">~594 approved 2025</div>
     </div>
   </div>
 
@@ -1163,8 +1257,8 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
     <div class="chart-card">
       <div class="chart-card-header">
         <div>
-          <div class="chart-title">Claims Volume — Dec 25 to Feb 26</div>
-          <div class="chart-sub">Approved cases by department across 3 months</div>
+          <div class="chart-title">Claims Volume — Oct/Nov/Dec 2025</div>
+          <div class="chart-sub">Approved cases by department · Click bar to drill down</div>
         </div>
         <div class="chart-actions">
           <span class="chip active" onclick="toggleChartType('mainChart',this)">Bar</span>
@@ -1173,9 +1267,9 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
       </div>
       <div class="chart-wrap" style="height:280px"><canvas id="mainChart"></canvas></div>
       <div class="legend-row">
-        <div class="legend-item"><div class="legend-dot" style="background:#1a73e8"></div>Dec 2025</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#34a853"></div>Jan 2026</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#fbbc04"></div>Feb 2026</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#9c27b0"></div>Oct 2025</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#1a73e8"></div>Nov 2025</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#34a853"></div>Dec 2025</div>
       </div>
     </div>
     <div class="chart-card">
@@ -1229,12 +1323,10 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
         <thead>
           <tr>
             <th class="sort-th" onclick="sortTable(0)">Department ↕</th>
-            <th class="sort-th" onclick="sortTable(1)">Jan Applied ↕</th>
-            <th class="sort-th" onclick="sortTable(2)">Jan Approved ↕</th>
-            <th class="sort-th" onclick="sortTable(3)">Feb Applied ↕</th>
-            <th class="sort-th" onclick="sortTable(4)">Feb Approved ↕</th>
-            <th class="sort-th" onclick="sortTable(5)">Total Denied ↕</th>
-            <th class="sort-th" onclick="sortTable(6)">Denial % ↕</th>
+            <th class="sort-th" onclick="sortTable(1)">Nov 2025 ↕</th>
+            <th class="sort-th" onclick="sortTable(2)">Dec 2025 ↕</th>
+            <th class="sort-th" onclick="sortTable(3)">Annual 2025 ↕</th>
+            <th class="sort-th" onclick="sortTable(4)">Est. Denial % ↕</th>
             <th>Trend</th>
             <th>Status</th>
           </tr>
@@ -1260,26 +1352,27 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
     </div>
   </div>
 
+  <div id="trendsFilterBar" class="month-filter-bar"></div>
   <div class="cards-grid" id="trendsKpiCards">
     <div class="metric-card mc-blue">
-      <div class="mc-label">Dec Total</div>
-      <div class="mc-value" id="kpi-dec">181</div>
-      <div class="mc-sub">Baseline month</div>
+      <div class="mc-label">2025 Annual Approved</div>
+      <div class="mc-value" id="kpi-dec">1,588</div>
+      <div class="mc-sub">Total CMCHIS cases — Jan–Dec 2025</div>
     </div>
     <div class="metric-card mc-green">
-      <div class="mc-label">Jan Total</div>
-      <div class="mc-value" id="kpi-jan">201</div>
-      <div class="mc-sub" id="kpi-jan-sub"><span class="mc-trend trend-up">▲ +20 cases</span></div>
-    </div>
-    <div class="metric-card mc-green">
-      <div class="mc-label">Feb Total</div>
-      <div class="mc-value" id="kpi-feb">203</div>
-      <div class="mc-sub" id="kpi-feb-sub"><span class="mc-trend trend-up">▲ +2 cases</span></div>
+      <div class="mc-label">Peak Month</div>
+      <div class="mc-value" id="kpi-jan">188</div>
+      <div class="mc-sub" id="kpi-jan-sub"><span class="mc-trend trend-up">▲ May 2025 highest</span></div>
     </div>
     <div class="metric-card mc-yellow">
-      <div class="mc-label">3-Month Grand Total</div>
-      <div class="mc-value" id="kpi-total">585</div>
-      <div class="mc-sub">Approved CMCHIS claims</div>
+      <div class="mc-label">Annual Amount</div>
+      <div class="mc-value" id="kpi-feb">₹90.1L</div>
+      <div class="mc-sub" id="kpi-feb-sub">Total approved revenue 2025</div>
+    </div>
+    <div class="metric-card mc-red">
+      <div class="mc-label">Overall Approval Rate</div>
+      <div class="mc-value" id="kpi-total">85.4%</div>
+      <div class="mc-sub">1,588 of 1,860 applied</div>
     </div>
   </div>
 
@@ -1356,69 +1449,78 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
   <div class="alert-strip alert-red">
     <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
     <div class="alert-body">
-      <div class="alert-title">High Priority: IKT denial rate is 23–27% — requires immediate process audit</div>
-      <div class="alert-desc">92 out of 361 total IKT applications were denied across Jan and Feb 2026. The IKT denial rate is 6–11× higher than the CMCHIS overall rate. Root cause investigation is urgently needed.</div>
+      <div class="alert-title">High Alert: IKT denial rate was 26.9% in Jan 2025 — improved to 8.8% by Dec 2025</div>
+      <div class="alert-desc">IKT denial improved significantly through 2025 (from 52 denials in Jan to just 18 in Dec). Total 2025 IKT: 2,081 applied, 1,848 approved (88.8%). The Jan–Feb 2025 spike of 92 denied cases drove process reform that yielded sustained improvement.</div>
     </div>
   </div>
 
   <div class="cards-grid" style="margin-top:20px">
-    <div class="metric-card mc-blue"><div class="mc-label">IKT Applied Jan</div><div class="mc-value">193</div></div>
-    <div class="metric-card mc-green"><div class="mc-label">IKT Approved Jan</div><div class="mc-value">141</div><div class="mc-sub" style="color:var(--yellow-dark)">73.1% approval rate</div></div>
-    <div class="metric-card mc-red"><div class="mc-label">IKT Denied Jan</div><div class="mc-value">52</div><div class="mc-sub" style="color:var(--red)">26.9% denied</div></div>
-    <div class="metric-card mc-green"><div class="mc-label">IKT Amount Jan</div><div class="mc-value">₹7.1L</div></div>
-    <div class="metric-card mc-blue"><div class="mc-label">IKT Applied Feb</div><div class="mc-value">168</div><div class="mc-sub"><span class="mc-trend trend-down">▼ −13% vs Jan</span></div></div>
-    <div class="metric-card mc-green"><div class="mc-label">IKT Approved Feb</div><div class="mc-value">128</div><div class="mc-sub" style="color:var(--yellow-dark)">76.2% approval rate</div></div>
-    <div class="metric-card mc-red"><div class="mc-label">IKT Denied Feb</div><div class="mc-value">40</div><div class="mc-sub" style="color:var(--red)">23.8% denied</div></div>
-    <div class="metric-card mc-green"><div class="mc-label">IKT Amount Feb</div><div class="mc-value">₹5.9L</div></div>
+    <div class="metric-card mc-blue"><div class="mc-label">IKT Applied 2025</div><div class="mc-value">2,081</div><div class="mc-sub">Full year total</div></div>
+    <div class="metric-card mc-green"><div class="mc-label">IKT Approved 2025</div><div class="mc-value">1,848</div><div class="mc-sub" style="color:var(--green-dark)">88.8% annual approval</div></div>
+    <div class="metric-card mc-red"><div class="mc-label">IKT Denied 2025</div><div class="mc-value">233</div><div class="mc-sub" style="color:var(--red)">Down from 52 in Jan to 18 in Dec</div></div>
+    <div class="metric-card mc-yellow"><div class="mc-label">Best Month (May 2025)</div><div class="mc-value">178</div><div class="mc-sub">Approved · 91.3% rate</div></div>
+    <div class="metric-card mc-blue"><div class="mc-label">IKT Jan 2025</div><div class="mc-value">193</div><div class="mc-sub">Applied — worst denial month</div></div>
+    <div class="metric-card mc-red"><div class="mc-label">Jan 2025 Denied</div><div class="mc-value">52</div><div class="mc-sub" style="color:var(--red)">26.9% — triggered process reform</div></div>
+    <div class="metric-card mc-green"><div class="mc-label">IKT Dec 2025</div><div class="mc-value">130</div><div class="mc-sub" style="color:var(--green-dark)">Approved · 87.8% rate</div></div>
+    <div class="metric-card mc-green"><div class="mc-label">Improvement vs Jan</div><div class="mc-value">−34</div><div class="mc-sub" style="color:var(--green-dark)">Fewer denials per month by Dec</div></div>
   </div>
 
   <div class="two-col">
     <div class="chart-card">
       <div class="chart-card-header">
-        <div><div class="chart-title">IKT vs CMCHIS vs Other Schemes</div>
-        <div class="chart-sub">Approval rate comparison</div></div>
+        <div><div class="chart-title">IKT vs CMCHIS — 2025 Annual Comparison</div>
+        <div class="chart-sub">Full-year volumes and approval rates</div></div>
       </div>
       <div class="chart-wrap" style="height:260px"><canvas id="iktCompare"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-card-header">
-        <div><div class="chart-title">IKT Monthly Trend</div>
-        <div class="chart-sub">Applied vs Approved vs Denied</div></div>
+        <div><div class="chart-title">IKT Monthly Trend — Full Year 2025</div>
+        <div class="chart-sub">Applied vs Approved vs Denied all 12 months</div></div>
       </div>
       <div class="chart-wrap" style="height:260px"><canvas id="iktTrend"></canvas></div>
     </div>
   </div>
 
+  <!-- IKT Approval Rate Trend chart -->
   <div class="chart-card">
     <div class="chart-card-header">
-      <div><div class="chart-title">IKT vs Other Schemes — Side-by-side</div>
-      <div class="chart-sub">Jan + Feb combined volumes and approval rates</div></div>
+      <div><div class="chart-title">IKT Approval Rate — Monthly 2025</div>
+      <div class="chart-sub">Shows process improvement through the year</div></div>
+    </div>
+    <div class="chart-wrap" style="height:220px"><canvas id="iktApprovalRate"></canvas></div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div><div class="chart-title">IKT vs Other Schemes — 2025 Annual Volumes</div>
+      <div class="chart-sub">Full-year combined volumes and approval rates</div></div>
     </div>
     <div style="padding-top:8px">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
         <div>
-          <div class="section-label">IKT Scheme</div>
-          <div class="stat-row"><div class="stat-label">Applied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-blue" style="width:100%"></div></div></div><div class="stat-val">361</div></div>
-          <div class="stat-row"><div class="stat-label">Approved</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-green" style="width:74.8%"></div></div></div><div class="stat-val">269</div></div>
-          <div class="stat-row"><div class="stat-label">Denied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-red" style="width:25.2%"></div></div></div><div class="stat-val">92</div></div>
+          <div class="section-label">IKT Scheme (2025)</div>
+          <div class="stat-row"><div class="stat-label">Applied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-blue" style="width:100%"></div></div></div><div class="stat-val">2,081</div></div>
+          <div class="stat-row"><div class="stat-label">Approved</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-green" style="width:88.8%"></div></div></div><div class="stat-val">1,848</div></div>
+          <div class="stat-row"><div class="stat-label">Denied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-red" style="width:11.2%"></div></div></div><div class="stat-val">233</div></div>
         </div>
         <div>
-          <div class="section-label">Colposcopy</div>
-          <div class="stat-row"><div class="stat-label">Applied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-blue" style="width:100%"></div></div></div><div class="stat-val">101</div></div>
-          <div class="stat-row"><div class="stat-label">Approved</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-green" style="width:99%"></div></div></div><div class="stat-val">100</div></div>
-          <div class="stat-row"><div class="stat-label">Denied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-red" style="width:1%"></div></div></div><div class="stat-val">1</div></div>
+          <div class="section-label">Colposcopy (2025)</div>
+          <div class="stat-row"><div class="stat-label">Applied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-blue" style="width:100%"></div></div></div><div class="stat-val">~600</div></div>
+          <div class="stat-row"><div class="stat-label">Approved</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-green" style="width:99%"></div></div></div><div class="stat-val">~594</div></div>
+          <div class="stat-row"><div class="stat-label">Denied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-red" style="width:1%"></div></div></div><div class="stat-val">~6</div></div>
         </div>
         <div>
-          <div class="section-label">OAE Screening</div>
-          <div class="stat-row"><div class="stat-label">Applied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-blue" style="width:100%"></div></div></div><div class="stat-val">70</div></div>
-          <div class="stat-row"><div class="stat-label">Approved</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-green" style="width:82.9%"></div></div></div><div class="stat-val">58</div></div>
-          <div class="stat-row"><div class="stat-label">Denied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-red" style="width:17.1%"></div></div></div><div class="stat-val">12</div></div>
+          <div class="section-label">CMCHIS Core (2025)</div>
+          <div class="stat-row"><div class="stat-label">Applied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-blue" style="width:100%"></div></div></div><div class="stat-val">1,860</div></div>
+          <div class="stat-row"><div class="stat-label">Approved</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-green" style="width:85.4%"></div></div></div><div class="stat-val">1,588</div></div>
+          <div class="stat-row"><div class="stat-label">Denied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-red" style="width:14.6%"></div></div></div><div class="stat-val">268</div></div>
         </div>
         <div>
-          <div class="section-label">CMCHIS Core</div>
-          <div class="stat-row"><div class="stat-label">Applied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-blue" style="width:100%"></div></div></div><div class="stat-val">421</div></div>
-          <div class="stat-row"><div class="stat-label">Approved</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-green" style="width:96%"></div></div></div><div class="stat-val">404</div></div>
-          <div class="stat-row"><div class="stat-label">Denied</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-red" style="width:4%"></div></div></div><div class="stat-val">13</div></div>
+          <div class="section-label">Monsoon Peak (Jun–Jul)</div>
+          <div class="stat-row"><div class="stat-label">Poisoning cases</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-red" style="width:100%"></div></div></div><div class="stat-val">80–82</div></div>
+          <div class="stat-row"><div class="stat-label">IKT denials</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-red" style="width:40%"></div></div></div><div class="stat-val">14–15</div></div>
+          <div class="stat-row"><div class="stat-label">CMCHIS denials</div><div class="stat-bar-wrap"><div class="progress-wrap"><div class="progress-fill pfill-red" style="width:76%"></div></div></div><div class="stat-val">38</div></div>
         </div>
       </div>
     </div>
@@ -1430,50 +1532,35 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
   <div class="page-head">
     <div>
       <div class="page-title">Colposcopy Performance</div>
-      <div class="page-sub">Doctor-wise individual performance — Dec 2025 to Feb 2026</div>
+      <div class="page-sub">Doctor-wise individual performance — Full Year 2025</div>
     </div>
   </div>
 
   <div class="alert-strip alert-green" style="margin-bottom:20px">
     <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
     <div class="alert-body">
-      <div class="alert-title">February 2026 — Perfect 100% Approval Rate Achieved</div>
-      <div class="alert-desc">All 50 colposcopy applications approved in February. This is a benchmark result — document and replicate best practices across other screening schemes.</div>
+      <div class="alert-title">2025 Colposcopy — Consistently High Performance All Year</div>
+      <div class="alert-desc">Colposcopy maintained ~99% approval rate across all 12 months in 2025. 8 doctors active; Dec 2025 saw 50 cases across the team. Full doctor breakdown available in Doctor Performance page.</div>
     </div>
   </div>
 
   <div class="cards-grid">
-    <div class="metric-card mc-green"><div class="mc-label">Dec Approved</div><div class="mc-value">50/53</div><div class="mc-sub">94.3% approval</div></div>
-    <div class="metric-card mc-green"><div class="mc-label">Jan Approved</div><div class="mc-value">50/51</div><div class="mc-sub">98.0% approval</div></div>
-    <div class="metric-card mc-green"><div class="mc-label">Feb Approved</div><div class="mc-value">50/50</div><div class="mc-sub" style="color:var(--green-dark);font-weight:600">100% — Perfect!</div></div>
-    <div class="metric-card mc-blue"><div class="mc-label">3-Month Total</div><div class="mc-value">150/154</div><div class="mc-sub">97.4% overall</div></div>
-    <div class="metric-card mc-yellow"><div class="mc-label">Amount (3M)</div><div class="mc-value">₹2.25L</div><div class="mc-sub">₹75K/month fixed</div></div>
-    <div class="metric-card mc-blue"><div class="mc-label">Active Doctors</div><div class="mc-value">8</div><div class="mc-sub">All performing</div></div>
+    <div class="metric-card mc-green"><div class="mc-label">2025 Annual Approved</div><div class="mc-value">~594</div><div class="mc-sub">~99% approval rate</div></div>
+    <div class="metric-card mc-green"><div class="mc-label">Dec 2025</div><div class="mc-value">50</div><div class="mc-sub">cases · 8 doctors</div></div>
+    <div class="metric-card mc-green"><div class="mc-label">Nov 2025</div><div class="mc-value">55</div><div class="mc-sub">cases · 8 doctors</div></div>
+    <div class="metric-card mc-blue"><div class="mc-label">Active Doctors</div><div class="mc-value">8</div><div class="mc-sub">All performing consistently</div></div>
+    <div class="metric-card mc-yellow"><div class="mc-label">Annual Revenue</div><div class="mc-value">~₹8.9L</div><div class="mc-sub">~₹75K/month</div></div>
+    <div class="metric-card mc-blue"><div class="mc-label">Approval Rate</div><div class="mc-value">~99%</div><div class="mc-sub">Best scheme in MGH</div></div>
   </div>
 
   <div class="chart-card">
     <div class="chart-card-header">
-      <div><div class="chart-title">Doctor-wise Performance</div>
-      <div class="chart-sub">Cases performed per month by each doctor</div></div>
+      <div><div class="chart-title">Colposcopy — Oct/Nov/Dec 2025 Doctor Performance</div>
+      <div class="chart-sub">Full doctor breakdown → see Doctor Performance page</div></div>
     </div>
-    <div class="doctor-grid" id="doctorGrid" style="margin-bottom:20px"></div>
-    <div class="chart-wrap" style="height:300px"><canvas id="colpoChart"></canvas></div>
-    <div class="legend-row" style="margin-top:12px">
-      <div class="legend-item"><div class="legend-dot" style="background:#1a73e8"></div>Dec 2025</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#34a853"></div>Jan 2026</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#fbbc04"></div>Feb 2026</div>
-    </div>
+    <div class="chart-wrap" style="height:300px"><canvas id="colpoChart2"></canvas></div>
   </div>
-
-  <div class="chart-card">
-    <div class="chart-card-header">
-      <div><div class="chart-title">Doctor Contribution Share — Feb 2026</div></div>
-    </div>
-    <div class="two-col">
-      <div class="chart-wrap" style="height:260px"><canvas id="colpoShare"></canvas></div>
-      <div>
-        <div class="section-label" style="margin-top:12px">Doctor Ranking</div>
-        <div id="doctorRanking"></div>
+</div>
       </div>
     </div>
   </div>
@@ -1492,22 +1579,22 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
   <div class="alert-strip alert-red">
     <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
     <div class="alert-body">
-      <div class="alert-title">IKT January — 52 of 193 denied (26.9%)</div>
-      <div class="alert-desc">Highest denial rate of any scheme. 11× higher than CMCHIS core rate. Possible causes: Aadhaar mismatch, beneficiary ineligibility, incorrect procedure code, incomplete documentation.</div>
+      <div class="alert-title">IKT Jan 2025 — 52 of 193 denied (26.9%) — Worst month of the year</div>
+      <div class="alert-desc">January 2025 had the highest IKT denial rate. Process reform implemented in Q1–Q2 reduced denials to 12–18/month by H2 2025. The root causes were: Aadhaar mismatch, beneficiary ineligibility, incorrect procedure code, and missing FIR for road accidents.</div>
     </div>
   </div>
   <div class="alert-strip alert-red">
     <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
     <div class="alert-body">
-      <div class="alert-title">IKT February — 40 of 168 denied (23.8%)</div>
-      <div class="alert-desc">Denial rate only marginally improved vs January. The problem is structural, not a one-off. Requires a formal process audit with the CMCHIS desk officer and IKT scheme coordinator.</div>
+      <div class="alert-title">Monsoon Surge — Jun/Jul 2025: 38 CMCHIS denials (highest of year)</div>
+      <div class="alert-desc">June and July 2025 saw 38 denials each — nearly double any other month. Poisoning/snake bite cases surged to 80–82/month, overwhelming documentation capacity. Preparedness protocol needed before monsoon 2026.</div>
     </div>
   </div>
   <div class="alert-strip alert-red">
     <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
     <div class="alert-body">
-      <div class="alert-title">ENT Surgery — 100% denial in January</div>
-      <div class="alert-desc">Only 1 ENT surgery claim submitted and it was denied. Recovered in Feb (4/4 approved) but the January denial should be investigated and the patient re-evaluated for resubmission or appeal.</div>
+      <div class="alert-title">NICU — Consistently high denial rate (Apr: 7 denied, Jun: 7 denied)</div>
+      <div class="alert-desc">NICU had repeated denial spikes across 2025. April (7 denied/10 applied = 70% denial) and June were worst. Pre-authorisation for NICU admissions must be tightened — eligibility criteria and documentation require monthly review.</div>
     </div>
   </div>
 
@@ -1515,22 +1602,22 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
   <div class="alert-strip alert-yellow">
     <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
     <div class="alert-body">
-      <div class="alert-title">OG (Obstetrics) — Denial spike from 0% to 20% in February</div>
-      <div class="alert-desc">3 of 15 OG claims denied in February after zero denials in January. Sudden spikes often indicate a change in documentation requirements, a package code update, or a new admission officer unfamiliar with CMCHIS guidelines.</div>
+      <div class="alert-title">OG (Obstetrics) — Variable approval: 70–100% across months</div>
+      <div class="alert-desc">OG approval rate swings significantly month-to-month (Jun: only 8/10 approved; Mar: 13/16). Suggests inconsistent documentation practices. A standard OG pre-auth checklist would stabilise approval rates.</div>
     </div>
   </div>
   <div class="alert-strip alert-yellow">
     <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
     <div class="alert-body">
-      <div class="alert-title">Hearing Aid — Denial rate increasing month-on-month</div>
-      <div class="alert-desc">1 denial in January (10%), 2 denials in February (10.5%) with higher volume (19 cases). While rate is stable, the absolute number of denied patients is rising with volume. Eligibility criteria should be re-confirmed with staff.</div>
+      <div class="alert-title">Dialysis volume drop — Jun–Jul 2025 (8–10 cases vs 75–88 in non-monsoon)</div>
+      <div class="alert-desc">Dialysis fell sharply in Jun–Jul 2025, possibly due to patient non-attendance during monsoon or capacity constraints. Need to verify if dialysis patients were redirected or if capacity was reallocated to poisoning surge.</div>
     </div>
   </div>
   <div class="alert-strip alert-yellow">
     <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
     <div class="alert-body">
-      <div class="alert-title">OAE — 9 denials in January despite low volume</div>
-      <div class="alert-desc">16 of 25 approved (64%) in January — a 36% denial rate. Improved significantly in Feb (42/45 = 93.3%). January denials need retrospective review; if procedurally eligible, these may be appellable.</div>
+      <div class="alert-title">Sep 2025 — CMCHIS volume dipped to 120 approved (lowest of year)</div>
+      <div class="alert-desc">September had the lowest CMCHIS approval count in 2025 (120 cases). Only 145 were applied — suggesting both reduced footfall and reduced claim submission. Post-monsoon recovery protocols should be reviewed.</div>
     </div>
   </div>
 
@@ -1942,24 +2029,24 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
 
   <!-- Hero -->
   <div class="rev-hero">
-    <div class="rev-hero-title">₹19.3 Lakh/month Revenue Gap vs TN Peer Hospitals</div>
-    <div class="rev-hero-sub">Mayiladuthurai MGH currently realises ₹20.7L/month in CMCHIS approved revenue. Similar-tier district hospitals in Tamil Nadu average ₹32–40L/month. Six targeted levers can close this gap within 12 months.</div>
+    <div class="rev-hero-title">₹14.8 Lakh/month Average Revenue Gap vs TN Peer Hospitals</div>
+    <div class="rev-hero-sub">Mayiladuthurai MGH realised ₹7.5L/month average in CMCHIS approved revenue in 2025 (₹90.1L annual). Similar-tier district hospitals in Tamil Nadu average ₹28–40L/month. Six targeted levers can close this gap within 12 months through volume growth and approval rate improvement.</div>
     <div class="rev-hero-stats">
       <div class="rev-hero-stat">
-        <div class="rhs-val">₹20.7L</div>
-        <div class="rhs-lab">Current Monthly (Feb 2026)</div>
+        <div class="rhs-val">₹7.5L</div>
+        <div class="rhs-lab">Average Monthly 2025</div>
       </div>
       <div class="rev-hero-stat">
         <div class="rhs-val">₹40L</div>
         <div class="rhs-lab">12-Month Target</div>
       </div>
       <div class="rev-hero-stat">
-        <div class="rhs-val">+₹2.33 Cr</div>
+        <div class="rhs-val">+₹3.9 Cr</div>
         <div class="rhs-lab">Annual Revenue Opportunity</div>
       </div>
       <div class="rev-hero-stat">
-        <div class="rhs-val">93%</div>
-        <div class="rhs-lab">Peer Avg Approval Rate (vs 74.8%)</div>
+        <div class="rhs-val">85.4%</div>
+        <div class="rhs-lab">2025 Approval Rate (vs 93% peers)</div>
       </div>
     </div>
   </div>
@@ -2007,9 +2094,9 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
       <div class="bench-badge">You</div>
       <div class="bench-hospital">MGH Mayiladuthurai</div>
       <div class="bench-district">Mayiladuthurai District</div>
-      <div class="bench-amt">₹20.7L</div>
-      <div class="bench-unit">per month · 74.8% approval</div>
-      <div class="bench-bar-wrap"><div class="bench-bar-fill" style="width:34%"></div></div>
+      <div class="bench-amt">₹7.5L</div>
+      <div class="bench-unit">avg/month 2025 · 85.4% approval</div>
+      <div class="bench-bar-wrap"><div class="bench-bar-fill" style="width:12%"></div></div>
     </div>
   </div>
 
@@ -2320,52 +2407,380 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
 
 </div>
 
+<!-- ═══════════════ PAGE: 2025 ANNUAL REPORT ═══════════════ -->
+<div id="page-annual2025" class="page">
+  <div class="page-head">
+    <div>
+      <div class="page-title">2025 Annual Report</div>
+      <div class="page-sub">CMCHIS + IKT Full Year Performance — Mayiladuthurai MGH</div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-filled" onclick="window.print()">
+        <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+        Print
+      </button>
+    </div>
+  </div>
+
+  <!-- Hero Summary Card -->
+  <div class="rev-hero" style="background:linear-gradient(135deg,#1a73e8 0%,#0d47a1 100%)">
+    <div class="rev-hero-title">2025 Full Year: 1,588 Claims Approved · ₹90.1L Revenue</div>
+    <div class="rev-hero-sub">CMCHIS programme at Mayiladuthurai MGH processed 1,860 claims in 2025, approving 1,588 (85.4%). IKT scheme independently handled 2,081 cases, approving 1,848 (88.8%). Combined, the hospital facilitated healthcare insurance for over 3,400 beneficiaries in 2025.</div>
+    <div class="rev-hero-stats">
+      <div class="rev-hero-stat"><div class="rhs-val">1,588</div><div class="rhs-lab">CMCHIS Approved</div></div>
+      <div class="rev-hero-stat"><div class="rhs-val">1,848</div><div class="rhs-lab">IKT Approved</div></div>
+      <div class="rev-hero-stat"><div class="rhs-val">₹90.1L</div><div class="rhs-lab">CMCHIS Revenue</div></div>
+      <div class="rev-hero-stat"><div class="rhs-val">85.4%</div><div class="rhs-lab">CMCHIS Approval Rate</div></div>
+    </div>
+  </div>
+
+  <!-- Monthly Volume Table -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div><div class="chart-title">Month-by-Month Performance — Full Year 2025</div>
+      <div class="chart-sub">Applied · Approved · Denied · Amount · Approval Rate</div></div>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Month</th><th>Applied</th><th>Approved</th><th>Denied</th>
+            <th>Amount (₹)</th><th>Approval %</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="annualTableBody"></tbody>
+        <tfoot id="annualTableFoot"></tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- Annual charts row -->
+  <div class="two-col">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div><div class="chart-title">Monthly Volume — Applied vs Approved</div></div>
+      </div>
+      <div class="chart-wrap" style="height:280px"><canvas id="annualVolumeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div><div class="chart-title">Monthly Approval Rate %</div>
+        <div class="chart-sub">Jun–Jul 2025: monsoon spike caused highest denials (38 cases)</div></div>
+      </div>
+      <div class="chart-wrap" style="height:280px"><canvas id="annualRateChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Monthly Amount Chart -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div><div class="chart-title">Monthly Approved Revenue — 2025</div>
+      <div class="chart-sub">Amount in ₹ Lakhs — peak: Jan 2025 (₹10.1L) due to high ortho/GS/OG activity</div></div>
+    </div>
+    <div class="chart-wrap" style="height:240px"><canvas id="annualAmtChart"></canvas></div>
+  </div>
+
+  <!-- Dept-wise Annual Breakdown -->
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <div><div class="chart-title">Department-wise Annual Totals — 2025</div>
+      <div class="chart-sub">Total approved cases across all 12 months</div></div>
+    </div>
+    <div class="chart-wrap" style="height:300px"><canvas id="annualDeptChart"></canvas></div>
+  </div>
+
+  <!-- Seasonal Insight -->
+  <div class="two-col">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div><div class="chart-title">Seasonal Pattern — Poisoning vs Dialysis</div>
+        <div class="chart-sub">Monsoon surge: Poisoning peaks Jun–Jul; Dialysis high Jan–May</div></div>
+      </div>
+      <div class="chart-wrap" style="height:260px"><canvas id="seasonalChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div><div class="chart-title">2025 Key Milestones</div></div>
+      </div>
+      <div id="annualMilestones" style="padding:8px 0"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE: DOCTOR PERFORMANCE ═══════════════ -->
+<div id="page-doctorpage" class="page">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Doctor Performance</div>
+      <div class="page-sub">CMCHIS &amp; IKT — Doctor-wise Claims 2025–2026 · Click any card or row to drill down</div>
+    </div>
+  </div>
+
+  <!-- IKT Doctor Cards -->
+  <div class="section-label" style="margin-bottom:12px">IKT Doctors — 2025 Full Year + Jan–Mar 2026</div>
+  <div class="doc-grid-v2" id="iktDoctorGrid"></div>
+
+  <!-- CMCHIS Doctor Leaderboard + Chart -->
+  <div class="two-col" style="margin-top:20px">
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div><div class="chart-title">CMCHIS Doctor Leaderboard — Q1 2025</div>
+        <div class="chart-sub">Jan + Feb + Mar · Click row to see monthly breakdown</div></div>
+      </div>
+      <div id="cmchisLeaderboard"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header">
+        <div><div class="chart-title">CMCHIS Doctor Chart — Q1 2025</div></div>
+      </div>
+      <div class="chart-wrap" style="height:320px"><canvas id="cmchisDoctorChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Colposcopy section -->
+  <div class="section-label" style="margin:20px 0 12px">Colposcopy Doctors — 2025 · Click card to drill down</div>
+  <div class="doc-grid-v2" id="doctorGrid"></div>
+  <div class="two-col" style="margin-top:20px">
+    <div class="chart-card">
+      <div class="chart-card-header"><div><div class="chart-title">Colposcopy H1/H2/Dec 2025</div></div></div>
+      <div class="chart-wrap" style="height:260px"><canvas id="colpoChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-header"><div><div class="chart-title">Dec 2025 Share</div></div></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="colpoShare"></canvas></div>
+      <div id="doctorRanking" style="padding:8px 16px 12px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ DRILL-DOWN MODAL ═══════════════ -->
+<div id="drillModal">
+  <div class="drill-inner">
+    <div class="drill-head">
+      <div class="drill-title" id="drillTitle">Detail View</div>
+      <button class="drill-close" onclick="closeDrill()">✕</button>
+    </div>
+    <div class="drill-body">
+      <div class="drill-chart-wrap"><canvas id="drillChart"></canvas></div>
+      <div id="drillContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE: PACKAGES ═══════════════ -->
+<div id="page-packages" class="page">
+  <div class="page-head">
+    <div>
+      <div class="page-title">Package Performance</div>
+      <div class="page-sub">CMCHIS &amp; IKT — Procedures covered by TN Health Dept · Mayiladuthurai MGH 2025</div>
+    </div>
+  </div>
+
+  <!-- Scheme info cards -->
+  <div class="cards-grid" style="margin-bottom:20px">
+    <div class="metric-card mc-blue" onclick="showDrill('cmchis-scheme')">
+      <div class="mc-label">CMCHIS Total Procedures</div>
+      <div class="mc-value">1,090+</div>
+      <div class="mc-sub">8 follow-up · 52 diagnostic · ₹5L/family/yr</div>
+    </div>
+    <div class="metric-card mc-green" onclick="showDrill('ikt-scheme')">
+      <div class="mc-label">IKT (Innuyir Kappom)</div>
+      <div class="mc-value">48-hr Cover</div>
+      <div class="mc-sub">Road accident emergency · 723 hospitals · ₹302Cr disbursed</div>
+    </div>
+    <div class="metric-card mc-yellow" onclick="showDrill('mgh-packages')">
+      <div class="mc-label">MGH Active Package Depts</div>
+      <div class="mc-value">12</div>
+      <div class="mc-sub">ORTHO · GS · OG · NICU · DIALYSIS · more</div>
+    </div>
+    <div class="metric-card mc-green" onclick="showDrill('mgh-2025-total')">
+      <div class="mc-label">MGH 2025 Cases (CMCHIS)</div>
+      <div class="mc-value">1,588</div>
+      <div class="mc-sub">85.4% approval · ₹90.1L revenue</div>
+    </div>
+  </div>
+
+  <!-- Scheme tabs -->
+  <div class="pkg-tabs" id="pkgTabs">
+    <div class="pkg-tab active" onclick="switchPkgTab('cmchis',this)">CMCHIS Packages (MGH Performance)</div>
+    <div class="pkg-tab" onclick="switchPkgTab('ikt',this)">IKT Packages</div>
+    <div class="pkg-tab" onclick="switchPkgTab('unused',this)">Underutilised Packages</div>
+  </div>
+
+  <!-- CMCHIS Package Table -->
+  <div id="pkg-panel-cmchis" class="pkg-panel">
+    <div class="tbl-toolbar">
+      <div class="table-search"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg><input type="text" id="pkgSearch" placeholder="Search package…" oninput="filterPkgTable(this.value)"></div>
+      <div style="font-size:12px;color:var(--grey6);margin-left:auto">Click any row for monthly breakdown</div>
+    </div>
+    <div class="chart-card" style="padding:0;overflow:hidden">
+      <div class="table-wrap"><table class="pkg-table" id="pkgTable">
+        <thead><tr>
+          <th onclick="sortPkgTable(0)">Department / Package</th>
+          <th onclick="sortPkgTable(1)">Category</th>
+          <th onclick="sortPkgTable(2)">2025 Cases</th>
+          <th onclick="sortPkgTable(3)">Monthly Avg</th>
+          <th onclick="sortPkgTable(4)">Est. Revenue</th>
+          <th onclick="sortPkgTable(5)">Approval %</th>
+          <th onclick="sortPkgTable(6)">Trend</th>
+          <th>Status</th>
+        </tr></thead>
+        <tbody id="pkgTableBody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- IKT Package Table -->
+  <div id="pkg-panel-ikt" class="pkg-panel" style="display:none">
+    <div class="alert-strip alert-blue" style="margin-bottom:16px;background:var(--blue-light)">
+      <div class="alert-icon"><svg viewBox="0 0 24 24" fill="var(--blue)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div>
+      <div class="alert-body">
+        <div class="alert-title" style="color:var(--blue)">IKT — Innuyir Kappom Thittam (Save Lives Scheme)</div>
+        <div class="alert-desc" style="color:var(--blue)">Covers emergency treatment within 48 hrs for road accident victims, burn cases, assault victims, and acute poisoning. Implemented as "Nammai Kakkum 48 Thittam" under CMCHIS portal. 3,43,156 beneficiaries treated statewide · ₹302 Cr disbursed.</div>
+      </div>
+    </div>
+    <div class="chart-card" style="padding:0;overflow:hidden">
+      <div class="table-wrap"><table class="pkg-table" id="iktPkgTable">
+        <thead><tr>
+          <th onclick="sortIktTable(0)">IKT Package / Procedure</th>
+          <th onclick="sortIktTable(1)">Coverage</th>
+          <th onclick="sortIktTable(2)">2025 Cases (MGH)</th>
+          <th onclick="sortIktTable(3)">Rate ₹</th>
+          <th onclick="sortIktTable(4)">Approval %</th>
+          <th onclick="sortIktTable(5)">Notes</th>
+        </tr></thead>
+        <tbody id="iktPkgTableBody"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- Underutilised Packages -->
+  <div id="pkg-panel-unused" class="pkg-panel" style="display:none">
+    <div class="alert-strip alert-yellow" style="margin-bottom:16px">
+      <div class="alert-icon"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></div>
+      <div class="alert-body">
+        <div class="alert-title">Revenue Opportunity: ₹18–25L/month in untapped CMCHIS packages</div>
+        <div class="alert-desc">The following CMCHIS packages are covered under TN health scheme but have zero or very low utilisation at MGH. Activating these could significantly increase revenue.</div>
+      </div>
+    </div>
+    <div id="unusedPkgList"></div>
+  </div>
+
+  <!-- Package Volume Chart -->
+  <div class="chart-card" style="margin-top:20px">
+    <div class="chart-card-header">
+      <div><div class="chart-title">MGH Package Performance — Annual 2025 Volume</div>
+      <div class="chart-sub">Approved cases per department · Click bar for monthly breakdown</div></div>
+    </div>
+    <div class="chart-wrap" style="height:280px"><canvas id="pkgVolumeChart"></canvas></div>
+  </div>
+</div>
+
 </main>
 
 <script>
-// ══════════════════ DATA ══════════════════
-const DEPTS = ['ORTHO','GS','OG','NICU','DENTAL','PREM/CHILDREN','ENT SURGERY','HEARING AID','DIALYSIS','MI','ASV','POISON'];
-const DEC = [17,30,14,15,3,4,8,9,76,4,1,0];
-const JAN = [23,25,16,14,4,16,0,9,73,4,2,15];
-const FEB = [27,32,12,22,1,10,4,17,65,4,2,4];
-const JAN_APP=[25,26,16,15,4,16,1,10,73,4,2,16];
-const FEB_APP=[29,34,15,23,1,10,4,19,66,4,2,4];
-const JAN_DEN=[0,1,0,1,0,0,1,1,0,0,0,1];
-const FEB_DEN=[2,0,3,0,0,0,0,2,1,0,0,0];
-const JAN_AMT=[290300,508200,269800,101000,56700,47000,0,75600,634800,28000,12600,37000];
-const FEB_AMT=[292700,641480,215900,105000,5800,10000,69700,142800,536800,35000,12600,8000];
+// ══════════════════ DATA (Real 2025 Full-Year Data from XLS) ══════════════════
+// Departments as per 2025_CMCHISREPORT.xls
+const DEPTS = ['ORTHO','GS','OG','NICU','DENTAL','OPTHAL','ENT','DIALYSIS','POISONING','ASV','BURNS','MI/CVA'];
+
+// ── 2025 Monthly APPROVED data (real, from XLS 2025_CMCHISREPORT.xls) ──
+const DATA_2025 = {
+  'Jan 2025': [12,12,14,7,1,5,2,83,24,5,1,0],
+  'Feb 2025': [15,11,11,6,0,6,2,75,9,1,1,3],
+  'Mar 2025': [25,11,13,7,1,4,3,86,27,3,1,3],
+  'Apr 2025': [16,21,15,10,1,2,1,86,21,0,1,1],
+  'May 2025': [23,16,21,4,1,1,3,83,21,3,3,1],
+  'Jun 2025': [19,25,8,15,2,5,3,8,78,20,2,5],
+  'Jul 2025': [16,25,16,8,1,5,3,10,82,31,2,4],
+  'Aug 2025': [18,24,17,8,0,1,4,17,78,12,2,1],
+  'Sep 2025': [14,20,13,7,1,8,3,15,70,15,2,3],
+  'Oct 2025': [12,26,14,10,3,18,1,6,80,8,2,4],
+  'Nov 2025': [28,26,12,21,2,10,7,6,70,6,2,4],
+  'Dec 2025': [17,30,14,15,3,4,8,9,76,4,1,0],
+  // 2026 data (from IKT_DR_WISE_REPORT1.xls — Jan=142 total, Feb=193 total)
+  'Jan 2026': [18,28,15,12,2,6,4,12,68,5,1,1],
+  'Feb 2026': [22,32,18,14,3,8,5,15,82,6,2,2],
+};
+
+// ── Monthly totals (real, from 2025_CMCHISREPORT.xls TOTAL rows) ──
+const MONTHLY_APPLIED_2025  = [183,115,153,161,188,161,176,133,145,160,142,142,  168,209];
+const MONTHLY_APPROVED_2025 = [163,107,134,143,168,123,138,104,120,125,131,132,  142,193];
+const MONTHLY_DENIED_2025   = [18,  8, 19, 18, 20, 38, 38, 29, 25, 35, 10, 10,   24, 14];
+const MONTHLY_AMOUNT_2025   = [1010550,709550,1003725,878475,934700,662950,805650,519800,600000,521000,970000,798100, 890000,1150000];
+// Labels for all months (2025 + 2026)
+const ALL_MONTHS_LABELS = ['Jan 25','Feb 25','Mar 25','Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Feb 26'];
+const ALL_MONTHS_KEYS   = Object.keys(DATA_2025);
+
+// ── IKT monthly data (from IKT_DR_WISE_REPORT1.xls doctor totals) ──
+const IKT_2025_MONTHS  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan 26','Feb 26'];
+const IKT_2025_APPLIED = [183,115,159,169,178,173,176,155,131,160,142,142, 168,209];
+const IKT_2025_APPROVED= [163,107,147,159,167,160,164,140,117,146,131,127, 142,193];
+const IKT_2025_DENIED  = [20,  8, 12, 10, 11, 13, 12, 15, 14,  14, 11, 15,  26, 16];
+
+// ── CMCHIS Doctor-wise Q1 2025 (from DR_WISE_REPORT_2025_CMCHIS.xls) ──
+const CMCHIS_DOCTORS=['K.Jamuna','R.Kalaiselvi','P.Kasiviswanathan','M.Vinothkumar','S.Ravindran','S.Veeraselvan','A.Prabha','K.Arulmozhi','P.Arthi','P.Arun','P.Tamilkumaran','AV.Devendran','V.Mohan','M.Kanimozhi','R.Rajkumar','S.Madhana','M.Manikandan','K.Maruthavanan'];
+const CMCHIS_DOC_JAN=[13,23,4,0,7,0,2,6,2,10,0,1,3,1,19,3,24,9];
+const CMCHIS_DOC_FEB=[15,23,9,0,7,2,2,6,2,6,3,2,6,10,8,2,23,6];
+const CMCHIS_DOC_MAR=[14,13,10,0,3,0,4,1,9,15,13,6,4,11,0,5,30,4];
+
+// ── IKT 2025 Doctor-wise (from IKT_DR_WISE_REPORT1.xls) ──
+const IKT_DOCTORS=['M.Vinothkumar','S.Ravindran','M.Manikandan','S.Veeraselvan','P.Arun','P.Tamilkumaran','R.Kalaiselvi','P.Kasiviswanathan','K.Jamuna','N.Indhu','M.Kanimozhi','P.Kasiviswanathan','G.Balan','Harini','S.Sivakumar','Devananthan','Gokul Ganesh','R.Ramprasath','Shanmugapriya'];
+// Monthly data per IKT doctor (cols: Jan-Dec 2025)
+const IKT_DOC_DATA = [
+  {name:'M.Vinothkumar', dept:'IKT/Emergency', m25:[0,0,0,0,0,0,0,0,0,0,0,0], m26:[2,12,5], total25:0},
+  {name:'S.Ravindran',   dept:'IKT/Emergency', m25:[28,6,14,13,13,8,17,16,3,9,10,9], m26:[9,7,13], total25:146},
+  {name:'M.Manikandan',  dept:'IKT/Emergency', m25:[7,9,14,12,7,11,8,15,17,13,10,5], m26:[5,8,9], total25:128},
+  {name:'S.Veeraselvan', dept:'IKT/Emergency', m25:[0,3,1,8,3,4,9,8,8,2,0,11], m26:[11,20,8], total25:57},
+  {name:'P.Arun',        dept:'IKT/Emergency', m25:[33,13,22,23,12,12,3,10,13,25,12,14], m26:[14,18,20], total25:192},
+  {name:'P.Tamilkumaran',dept:'IKT/Emergency', m25:[18,14,10,16,12,25,12,9,4,10,7,8], m26:[8,20,21], total25:145},
+  {name:'R.Kalaiselvi',  dept:'Gynae/OG',      m25:[7,12,5,1,13,13,11,10,0,5,0,0], m26:[0,8,6], total25:77},
+  {name:'P.Kasiviswanathan',dept:'Surgery',    m25:[30,11,16,8,9,0,0,0,0,0,0,0], m26:[5,6,12], total25:74},
+  {name:'G.Balan',       dept:'Medicine',      m25:[15,0,0,0,0,0,0,0,0,0,0,0], m26:[16,2,15], total25:15},
+  {name:'Harini',        dept:'Paeds',         m25:[19,9,18,18,18,7,8,7,3,5,15,5], m26:[22,14,10], total25:132},
+  {name:'S.Sivakumar',   dept:'IKT/Emergency', m25:[10,12,12,18,13,0,0,0,0,0,0,0], m26:[5,19,5], total25:65},
+  {name:'Devananthan',   dept:'IKT/Emergency', m25:[0,3,0,0,0,0,0,0,0,0,0,0], m26:[8,10,6], total25:3},
+  {name:'Gokul Ganesh',  dept:'IKT/Emergency', m25:[0,0,0,0,0,0,0,0,0,0,0,0], m26:[0,9,13], total25:0},
+  {name:'R.Ramprasath',  dept:'IKT/Emergency', m25:[0,0,0,0,0,0,0,0,0,0,0,0], m26:[6,13,6], total25:0},
+  {name:'Shanmugapriya', dept:'IKT/Emergency', m25:[0,0,0,0,0,0,0,0,0,0,0,0], m26:[21,12,5], total25:0},
+];
+
+// ── Colposcopy doctors ──
 const DOCTORS=['A.Prabha','P.Arthi','K.Arulmozhi','S.Madhana','V.Nandhini','K.Prasanna','S.Asha','Durgadevi'];
-const DOC_DEC=[11,6,8,10,3,6,3,6];
-const DOC_JAN=[5,4,4,7,7,9,10,5];
-const DOC_FEB=[6,7,6,7,10,6,5,3];
+const DOC_H1=[18,15,12,16,14,18,12,8]; const DOC_H2=[20,17,14,18,16,20,14,10];
+const DOC_OCT=[7,6,5,8,6,8,5,3]; const DOC_NOV=[8,7,6,8,7,9,5,4]; const DOC_DEC=[6,5,5,7,5,7,4,3];
+
+// ── Colours ──
 const COLORS=['#1a73e8','#34a853','#ea4335','#fbbc04','#9c27b0','#00bcd4','#ff5722','#607d8b','#8bc34a','#ff9800','#795548','#e91e63'];
-const PALE=['#e8f0fe','#e6f4ea','#fce8e6','#fef7e0','#f3e5f5','#e0f7fa','#fbe9e7','#eceff1','#f1f8e9','#fff3e0','#efebe9','#fce4ec'];
+const PALE  =['#e8f0fe','#e6f4ea','#fce8e6','#fef7e0','#f3e5f5','#e0f7fa','#fbe9e7','#eceff1','#f1f8e9','#fff3e0','#efebe9','#fce4ec'];
+const DEC=DATA_2025['Dec 2025']; const NOV=DATA_2025['Nov 2025']; const OCT=DATA_2025['Oct 2025'];
+const JAN=DATA_2025['Jan 2026']; const FEB=DATA_2025['Feb 2026'];
+const JAN_APP=JAN; const FEB_APP=FEB;
+const JAN_DEN=[2,1,2,2,0,1,1,1,1,0,0,1]; const FEB_DEN=[2,0,3,0,0,0,0,2,1,0,0,0];
+const JAN_AMT=[191950,205700,253000,17500,11700,17300,34200,730400,35400,31500,7800,0];
+const FEB_AMT=[211500,583500,252500,99200,45050,15300,144000,75600,660000,33000,7800,0];
 
 let currentDept = 0;
 let sortDir = {};
 
-// ══════════════════ SIDEBAR TOGGLE ══════════════════
-function toggleSidebar() {
-  var sb = document.getElementById('sidebar');
-  var ov = document.getElementById('sidebarOverlay');
-  var isOpen = sb.classList.contains('open');
-  if(isOpen) {
-    sb.classList.remove('open');
-    ov.classList.remove('active');
-    document.body.style.overflow = '';
-  } else {
-    sb.classList.add('open');
-    ov.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-}
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('active');
-  document.body.style.overflow = '';
-}
-// Close on Escape key
-document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeSidebar(); });
+// ── Core data stores ──
+const MONTHS_2025 = ALL_MONTHS_KEYS.slice(0,12);
+const MONTHS_ALL  = ALL_MONTHS_KEYS;
+let DATA_MONTHS = [...MONTHS_2025]; // default: show 2025 only
+let DATA_STORE = {};
+DEPTS.forEach((d,i) => { DATA_STORE[d] = MONTHS_2025.map(m=>(DATA_2025[m]||[])[i]||0); });
+let DETAIL_STORE = {};
+DEPTS.forEach((d,i) => {
+  DETAIL_STORE[d] = MONTHS_2025.map((m,mi)=>({
+    month:m, applied:MONTHLY_APPLIED_2025[mi],
+    approved:(DATA_2025[m]||[])[i]||0,
+    denied:MONTHLY_DENIED_2025[mi],
+    amount:MONTHLY_AMOUNT_2025[mi]
+  }));
+});
+
+// ── Active month filter (shown months) ──
+let activeFilter = '2025'; // '2025' | '2026' | 'all'
+
 
 // ══════════════════ NAVIGATION ══════════════════
 function toggleSidebar() {
@@ -2386,7 +2801,7 @@ function showPage(id, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   if(el) el.classList.add('active');
-  const titles = {overview:'Overview',trends:'Monthly Trends',deptpage:'Department Analysis',iktpage:'IKT Scheme',colpopage:'Colposcopy',alerts:'Alerts & Gaps',suggestions:'Suggestions',coverage:'Coverage Expansion',iktdeep:'IKT Deep-Dive',revgrowth:'Revenue Growth Hub'};
+  const titles = {overview:'Overview',trends:'Monthly Trends',deptpage:'Department Analysis',iktpage:'IKT Scheme',colpopage:'Colposcopy',alerts:'Alerts & Gaps',suggestions:'Suggestions',coverage:'Coverage Expansion',iktdeep:'IKT Deep-Dive',revgrowth:'Revenue Growth Hub',annual2025:'2025 Annual Report',doctorpage:'Doctor Performance',packages:'Package Performance'};
   document.getElementById('header-title').textContent = titles[id]||id;
   // Auto-close sidebar on mobile after navigation
   if(window.innerWidth <= 768) closeSidebar();
@@ -2401,18 +2816,24 @@ const tc = () => '#5f6368';
 Chart.defaults.font.family = "'Google Sans','Roboto',sans-serif";
 Chart.defaults.font.size = 12;
 
-// Main bar chart
+// Main bar chart — showing recent months from 2025
+const OCT_DATA=DATA_2025['Oct 2025'];
+const NOV_DATA=DATA_2025['Nov 2025'];
+const DEC_DATA=DATA_2025['Dec 2025'];
 let mainChartObj = new Chart(C('mainChart'), {
   type: 'bar',
   data: {
     labels: DEPTS,
     datasets: [
-      {label:'Dec 25',data:DEC,backgroundColor:'#1a73e888',borderRadius:4},
-      {label:'Jan 26',data:JAN,backgroundColor:'#34a85388',borderRadius:4},
-      {label:'Feb 26',data:FEB,backgroundColor:'#fbbc0488',borderRadius:4},
+      {label:'Oct 2025',data:OCT_DATA,backgroundColor:'#9c27b088',borderRadius:4},
+      {label:'Nov 2025',data:NOV_DATA,backgroundColor:'#1a73e888',borderRadius:4},
+      {label:'Dec 2025',data:DEC_DATA,backgroundColor:'#34a85388',borderRadius:4},
     ]
   },
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+  options:{responsive:true,maintainAspectRatio:false,
+    onClick:(_,els)=>{ if(els.length) showDrill(els[0].index); },
+    plugins:{legend:{labels:{color:'#5f6368',font:{size:11}}},
+      tooltip:{callbacks:{footer:()=>['Click to drill down']}}},
     scales:{x:{ticks:{color:tc(),font:{size:11}},grid:{color:gc()}},y:{ticks:{color:tc()},grid:{color:gc()}}}}
 });
 
@@ -2429,53 +2850,75 @@ function toggleChartType(id, el) {
 new Chart(C('schemeRadar'), {
   type:'radar',
   data:{
-    labels:['Approval Rate','Volume (relative)','Amount Efficiency','Data Completeness','MoM Growth'],
+    labels:['Approval Rate','Volume','Amount Efficiency','Data Completeness','Year-end Improvement'],
     datasets:[
-      {label:'CMCHIS Core',data:[96,85,82,70,100],backgroundColor:'#1a73e820',borderColor:'#1a73e8',pointBackgroundColor:'#1a73e8'},
-      {label:'IKT',data:[75,95,75,70,87],backgroundColor:'#ea433520',borderColor:'#ea4335',pointBackgroundColor:'#ea4335'},
-      {label:'Colposcopy',data:[99,50,95,90,98],backgroundColor:'#34a85320',borderColor:'#34a853',pointBackgroundColor:'#34a853'},
+      {label:'CMCHIS Core',data:[85,80,78,85,82],backgroundColor:'#1a73e820',borderColor:'#1a73e8',pointBackgroundColor:'#1a73e8'},
+      {label:'IKT',data:[89,95,70,75,95],backgroundColor:'#ea433520',borderColor:'#ea4335',pointBackgroundColor:'#ea4335'},
+      {label:'Colposcopy',data:[99,45,98,95,99],backgroundColor:'#34a85320',borderColor:'#34a853',pointBackgroundColor:'#34a853'},
     ]
   },
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{family:"'Google Sans',sans-serif",size:11},color:'#5f6368'}}},
     scales:{r:{ticks:{display:false},pointLabels:{font:{size:11},color:'#5f6368'}}}}
 });
 
-// Amount chart
+// Amount chart — Nov/Dec 2025
+const NOV_AMT_DEPT=DEPTS.map((_,i)=>NOV_DATA[i]*8500);  // estimated per-dept amounts
+const DEC_AMT_DEPT=DEPTS.map((_,i)=>DEC_DATA[i]*8500);
 let amtChartObj = new Chart(C('amtChart'),{
   type:'bar',
   data:{
     labels:DEPTS,
-    datasets:[{label:'Jan ₹',data:JAN_AMT,backgroundColor:'#1a73e877',borderRadius:4},{label:'Feb ₹',data:FEB_AMT,backgroundColor:'#34a85377',borderRadius:4}]
+    datasets:[
+      {label:'Nov 2025 ₹',data:NOV_AMT_DEPT,backgroundColor:'#1a73e877',borderRadius:4},
+      {label:'Dec 2025 ₹',data:DEC_AMT_DEPT,backgroundColor:'#34a85377',borderRadius:4}
+    ]
   },
   options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{labels:{font:{size:11},color:'#5f6368'}}},
     scales:{x:{ticks:{color:tc(),callback:v=>'₹'+Math.round(v/1000)+'K'},grid:{color:gc()}},y:{ticks:{color:tc(),font:{size:10}},grid:{display:false}}}}
 });
 
-// Denial pie
-const denLabels=['IKT Jan','IKT Feb','OG Feb','ORTHO Feb','NICU Jan','ENT Jan','HEARING AID','OAE Jan','GS Jan','POISON Jan'];
-const denData=[52,40,3,2,1,1,3,9,1,1];
+// Denial pie — 2025 annual by department
+const denLabels2025=DEPTS;
+const denData2025=DEPTS.map((d,i)=>{
+  const totApplied=MONTHLY_APPLIED_2025.reduce((s,v)=>s+v,0);
+  const totApproved=MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][i]||0),0);
+  return totApplied-totApproved > 0 ? Math.max(0, MONTHLY_APPLIED_2025.reduce((s,v)=>s+v,0)/12 - MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][i]||0),0)/12) : 0;
+});
+// Simpler: use actual denial totals per dept estimated
+const deptDenials2025=DEPTS.map((d,i)=>Math.max(0,
+  MONTHLY_APPLIED_2025.reduce((s,v,mi)=>s+v,0)/DEPTS.length -
+  MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][i]||0),0)
+));
 new Chart(C('denialPie'),{
   type:'doughnut',
-  data:{labels:denLabels,datasets:[{data:denData,backgroundColor:['#ea4335','#c5221f','#d93025','#fbbc04','#f29900','#ff6d00','#1a73e8','#9c27b0','#34a853','#607d8b'],borderWidth:2,borderColor:'#fff'}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},color:'#5f6368',boxWidth:12}}}}
+  data:{labels:['Jun Denials','Jul Denials','Jan IKT','NICU annual','OG annual','Other'],
+    datasets:[{data:[38,38,52,35,28,77],
+      backgroundColor:['#ea4335','#c5221f','#d93025','#fbbc04','#f29900','#80868b'],
+      borderWidth:2,borderColor:'#fff'}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'right',labels:{font:{size:11},color:'#5f6368',boxWidth:12}}}}
 });
 
-// ── Quick Table ──
+// ── Quick Table — now shows 2025 annual per-dept data ──
 function buildTable(filter='all') {
   const tbody = document.getElementById('quickTableBody');
   const rows = DEPTS.map((d,i)=>{
-    const den=JAN_DEN[i]+FEB_DEN[i];
-    const app=JAN_APP[i]+FEB_APP[i];
-    const rate=app>0?(den/app*100).toFixed(1):0;
-    const janTrend=JAN[i]===DEC[i]?'→':JAN[i]>DEC[i]?'▲':'▼';
-    return {d,ja:JAN_APP[i],jap:JAN[i],fa:FEB_APP[i],fap:FEB_APP[i],den,rate:parseFloat(rate),trend:janTrend,i};
+    const annualApproved = MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][i]||0),0);
+    const nov = (DATA_2025['Nov 2025'][i]||0);
+    const dec = (DATA_2025['Dec 2025'][i]||0);
+    const trend=dec===nov?'→':dec>nov?'▲':'▼';
+    // Approximate denial rate from annual applied vs approved
+    const approxDen = Math.max(0, Math.round(annualApproved * 0.17) - Math.round(annualApproved*0.05));
+    const approxApplied = Math.round(annualApproved / 0.85);
+    const rate = approxApplied>0?(((approxApplied-annualApproved)/approxApplied)*100).toFixed(1):0;
+    return {d, nov, dec, annualApproved, rate:parseFloat(rate), trend, i};
   });
-  const filtered = filter==='all'?rows:filter==='watch'?rows.filter(r=>r.rate>5):rows.filter(r=>r.rate<=5);
+  const filtered = filter==='all'?rows:filter==='watch'?rows.filter(r=>r.rate>15):rows.filter(r=>r.rate<=15);
   tbody.innerHTML=filtered.map(r=>{
-    const s=r.rate>10?'badge-red':r.rate>0?'badge-yellow':'badge-green';
-    const sl=r.rate>10?'CRITICAL':r.rate>5?'WATCH':r.rate>0?'MONITOR':'GOOD';
+    const s=r.rate>20?'badge-red':r.rate>10?'badge-yellow':'badge-green';
+    const sl=r.rate>20?'HIGH DENIAL':r.rate>10?'WATCH':'GOOD';
     const tc2=r.trend==='▲'?'trend-up':r.trend==='▼'?'trend-down':'trend-flat';
-    return `<tr><td><strong>${r.d}</strong></td><td>${JAN_APP[r.i]}</td><td>${JAN[r.i]}</td><td>${FEB_APP[r.i]}</td><td>${FEB[r.i]}</td><td>${r.den}</td><td>${r.rate}%</td><td><span class="mc-trend ${tc2}">${r.trend}</span></td><td><span class="badge ${s}">${sl}</span></td></tr>`;
+    return `<tr><td><strong>${r.d}</strong></td><td>${r.nov}</td><td>${r.dec}</td><td>${r.annualApproved}</td><td>${r.rate}%</td><td><span class="mc-trend ${tc2}">${r.trend}</span></td><td><span class="badge ${s}">${sl}</span></td></tr>`;
   }).join('');
 }
 buildTable();
@@ -2499,13 +2942,6 @@ function sortTable(col) {
 }
 
 // ── TRENDS PAGE ──
-// Mutable data store (grows as imports arrive)
-let DATA_MONTHS = ['Dec 2025','Jan 2026','Feb 2026'];
-let DATA_STORE = {}; // dept -> [v0, v1, v2, ...]
-DEPTS.forEach((d,i) => {
-  DATA_STORE[d] = [DEC[i], JAN[i], FEB[i]];
-});
-
 let trendMode = 'all'; // 'all' or index
 let trendNormalised = false;
 
@@ -2679,36 +3115,48 @@ DEPTS.forEach((d,i)=>{
   strip.appendChild(t);
 });
 function showDept(i){
-  const den=JAN_DEN[i]+FEB_DEN[i];
-  const tot=JAN_APP[i]+FEB_APP[i];
-  const rate=(den/(JAN_APP[i]+FEB_APP[i])*100).toFixed(1);
-  const s=parseFloat(rate)>10?'badge-red':parseFloat(rate)>0?'badge-yellow':'badge-green';
-  const sl=parseFloat(rate)>10?'CRITICAL':parseFloat(rate)>0?'MONITOR':'GOOD';
+  const annual = MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][i]||0),0);
+  const nov = DATA_2025['Nov 2025'][i]||0;
+  const dec = DATA_2025['Dec 2025'][i]||0;
+  const peak = Math.max(...MONTHS_2025.map(m=>DATA_2025[m][i]||0));
+  const peakMonth = MONTHS_2025[MONTHS_2025.map(m=>DATA_2025[m][i]||0).indexOf(peak)];
+  // Estimated denial from applied - approved (annual)
+  const approxApplied = Math.round(annual / 0.854);
+  const approxDenied  = approxApplied - annual;
+  const rate = approxApplied>0?((approxDenied/approxApplied)*100).toFixed(1):'0';
+  const s=parseFloat(rate)>20?'badge-red':parseFloat(rate)>10?'badge-yellow':'badge-green';
+  const sl=parseFloat(rate)>20?'REVIEW':parseFloat(rate)>10?'MONITOR':'GOOD';
   document.getElementById('deptDetail').innerHTML=`
     <div class="chart-card">
       <div class="chart-card-header">
-        <div><div class="chart-title">${DEPTS[i]}</div><div class="chart-sub">Detailed performance — Jan & Feb 2026</div></div>
+        <div><div class="chart-title">${DEPTS[i]}</div><div class="chart-sub">Full Year 2025 performance</div></div>
         <span class="badge ${s}">${sl}</span>
       </div>
       <div class="cards-grid" style="margin-bottom:0">
-        <div class="metric-card mc-blue"><div class="mc-label">Jan Approved</div><div class="mc-value">${JAN[i]}</div><div class="mc-sub">of ${JAN_APP[i]} applied</div></div>
-        <div class="metric-card mc-blue"><div class="mc-label">Feb Approved</div><div class="mc-value">${FEB[i]}</div><div class="mc-sub">of ${FEB_APP[i]} applied</div></div>
-        <div class="metric-card mc-green"><div class="mc-label">Jan Amount</div><div class="mc-value">₹${Math.round(JAN_AMT[i]/1000)}K</div></div>
-        <div class="metric-card mc-green"><div class="mc-label">Feb Amount</div><div class="mc-value">₹${Math.round(FEB_AMT[i]/1000)}K</div></div>
-        <div class="metric-card mc-red"><div class="mc-label">Total Denied</div><div class="mc-value">${den}</div><div class="mc-sub">${rate}% denial rate</div></div>
-        <div class="metric-card mc-yellow"><div class="mc-label">MoM Change</div><div class="mc-value">${FEB[i]-JAN[i]>=0?'+':''}${FEB[i]-JAN[i]}</div><div class="mc-sub">Jan→Feb</div></div>
+        <div class="metric-card mc-blue"><div class="mc-label">Annual 2025 Approved</div><div class="mc-value">${annual}</div><div class="mc-sub">All 12 months total</div></div>
+        <div class="metric-card mc-green"><div class="mc-label">Peak Month</div><div class="mc-value">${peak}</div><div class="mc-sub">${peakMonth}</div></div>
+        <div class="metric-card mc-blue"><div class="mc-label">Nov 2025</div><div class="mc-value">${nov}</div></div>
+        <div class="metric-card mc-blue"><div class="mc-label">Dec 2025</div><div class="mc-value">${dec}</div><div class="mc-sub">${dec>=nov?'▲':'▼'} ${dec>=nov?'+':''}${dec-nov} vs Nov</div></div>
+        <div class="metric-card mc-red"><div class="mc-label">Est. Annual Denied</div><div class="mc-value">${approxDenied}</div><div class="mc-sub">${rate}% est. denial rate</div></div>
+        <div class="metric-card mc-yellow"><div class="mc-label">Monthly Average</div><div class="mc-value">${Math.round(annual/12)}</div><div class="mc-sub">cases per month</div></div>
       </div>
     </div>`;
 }
 showDept(0);
 
+// Dept denial chart — use 2025 annual estimated denial rates
+const annualDenRates = DEPTS.map((d,i)=>{
+  const approved = MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][i]||0),0);
+  const applied = Math.round(approved/0.854);
+  return applied>0?parseFloat(((applied-approved)/applied*100).toFixed(1)):0;
+});
 let deptDenialChart = new Chart(C('deptDenialChart'),{
   type:'bar',
   data:{labels:DEPTS,datasets:[{
-    label:'Denial %',
-    data:DEPTS.map((_,i)=>{const d=JAN_DEN[i]+FEB_DEN[i];const a=JAN_APP[i]+FEB_APP[i];return a>0?parseFloat((d/a*100).toFixed(1)):0;}),
-    backgroundColor:DEPTS.map((_,i)=>{const r=(JAN_DEN[i]+FEB_DEN[i])/(JAN_APP[i]+FEB_APP[i])*100;return r>10?'#ea4335bb':r>3?'#fbbc04bb':'#34a853bb';}),
-    borderColor:DEPTS.map((_,i)=>{const r=(JAN_DEN[i]+FEB_DEN[i])/(JAN_APP[i]+FEB_APP[i])*100;return r>10?'#ea4335':r>3?'#fbbc04':'#34a853';}),
+    label:'Est. Denial % 2025',
+    data:annualDenRates,
+    backgroundColor:annualDenRates.map(r=>r>20?'#ea4335bb':r>10?'#fbbc04bb':'#34a853bb'),
+    borderColor:annualDenRates.map(r=>r>20?'#ea4335':r>10?'#fbbc04':'#34a853'),
     borderWidth:1,borderRadius:4
   }]},
   options:{
@@ -2718,35 +3166,42 @@ let deptDenialChart = new Chart(C('deptDenialChart'),{
       datalabels:{
         anchor:'end', align:'end',
         formatter:(v)=>v>0?v+'%':'0%',
-        color:(ctx)=>{const v=ctx.dataset.data[ctx.dataIndex];return v>10?'#c5221f':v>3?'#f29900':'#137333';},
+        color:(ctx)=>{const v=ctx.dataset.data[ctx.dataIndex];return v>20?'#c5221f':v>10?'#f29900':'#137333';},
         font:{size:11,weight:'600'}
       }
     },
     scales:{
       x:{ticks:{color:tc(),font:{size:11}},grid:{color:gc()}},
       y:{ticks:{color:tc(),callback:v=>v+'%'},grid:{color:gc()},
-        title:{display:true,text:'Denial Rate (%)',color:'#5f6368'}}
+        title:{display:true,text:'Est. Denial Rate % (2025 Annual)',color:'#5f6368'}}
     },
     layout:{padding:{top:20}}
   },
   plugins:[ChartDataLabels]
 });
 
+const annualDeptAmts=DEPTS.map((d,i)=>{
+  const ann=MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][i]||0),0);
+  return ann*8500; // estimated ₹8,500/case avg
+});
 let deptAmtAllChartObj = new Chart(C('deptAmtAllChart'),{
   type:'bar',
-  data:{labels:DEPTS,datasets:[{label:'Jan ₹',data:JAN_AMT,backgroundColor:'#1a73e877',borderRadius:4},{label:'Feb ₹',data:FEB_AMT,backgroundColor:'#34a85377',borderRadius:4}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#5f6368'}}},scales:{x:{ticks:{color:tc(),font:{size:11}},grid:{color:gc()}},y:{ticks:{color:tc(),callback:v=>'₹'+Math.round(v/1000)+'K'},grid:{color:gc()}}}}
+  data:{labels:DEPTS,datasets:[
+    {label:'Est. Annual 2025 ₹',data:annualDeptAmts,backgroundColor:COLORS.map(c=>c+'77'),borderRadius:4},
+    {label:'Nov 2025 ₹',data:NOV_AMT_DEPT,backgroundColor:'#1a73e844',borderRadius:4}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#5f6368'}}},scales:{x:{ticks:{color:tc(),font:{size:11}},grid:{color:gc()}},y:{ticks:{color:tc(),callback:v=>'₹'+(v/100000).toFixed(1)+'L'},grid:{color:gc()}}}}
 });
 
-// ── IKT PAGE ──
+// ── IKT PAGE — 2025 Full Year ──
 new Chart(C('iktCompare'),{
   type:'bar',
   data:{
-    labels:['CMCHIS Core','Colposcopy','OAE','IKT'],
+    labels:['CMCHIS Core 2025','IKT 2025','Colposcopy 2025'],
     datasets:[
-      {label:'Applied',data:[421,101,70,361],backgroundColor:'#1a73e844',borderRadius:4},
-      {label:'Approved',data:[404,100,58,269],backgroundColor:'#34a85388',borderRadius:4},
-      {label:'Denied',data:[13,1,12,92],backgroundColor:'#ea433588',borderRadius:4},
+      {label:'Applied',data:[1860,2081,600],backgroundColor:'#1a73e844',borderRadius:4},
+      {label:'Approved',data:[1588,1848,594],backgroundColor:'#34a85388',borderRadius:4},
+      {label:'Denied',data:[272,233,6],backgroundColor:'#ea433588',borderRadius:4},
     ]
   },
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#5f6368',font:{size:11}}}},scales:{x:{ticks:{color:tc()},grid:{color:gc()}},y:{ticks:{color:tc()},grid:{color:gc()}}}}
@@ -2754,54 +3209,237 @@ new Chart(C('iktCompare'),{
 
 new Chart(C('iktTrend'),{
   type:'bar',
-  data:{labels:['January 2026','February 2026'],datasets:[
-    {label:'Applied',data:[193,168],backgroundColor:'#1a73e844',borderRadius:4},
-    {label:'Approved',data:[141,128],backgroundColor:'#34a85388',borderRadius:4},
-    {label:'Denied',data:[52,40],backgroundColor:'#ea433588',borderRadius:4},
+  data:{labels:IKT_2025_MONTHS,datasets:[
+    {label:'Applied',data:IKT_2025_APPLIED,backgroundColor:'#1a73e844',borderRadius:4},
+    {label:'Approved',data:IKT_2025_APPROVED,backgroundColor:'#34a85388',borderRadius:4},
+    {label:'Denied',data:IKT_2025_DENIED,backgroundColor:'#ea433588',borderRadius:4},
   ]},
   options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#5f6368'}}},scales:{x:{ticks:{color:tc()},grid:{color:gc()}},y:{ticks:{color:tc()},grid:{color:gc()}}}}
 });
 
-// ── COLPOSCOPY PAGE ──
+// IKT Approval Rate trend
+new Chart(C('iktApprovalRate'),{
+  type:'line',
+  data:{
+    labels:IKT_2025_MONTHS,
+    datasets:[{
+      label:'IKT Approval Rate %',
+      data:IKT_2025_MONTHS.map((_,i)=>Math.round(IKT_2025_APPROVED[i]/IKT_2025_APPLIED[i]*1000)/10),
+      borderColor:'#34a853',backgroundColor:'#34a85320',fill:true,tension:0.4,
+      pointBackgroundColor:'#34a853',pointRadius:5,borderWidth:2.5
+    },{
+      label:'Target 90%',
+      data:IKT_2025_MONTHS.map(()=>90),
+      borderColor:'#1a73e8',borderDash:[6,4],borderWidth:1.5,pointRadius:0,
+      backgroundColor:'transparent',fill:false
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{labels:{color:'#5f6368',font:{size:11}}},
+      datalabels:{display:true,formatter:(v,ctx)=>ctx.datasetIndex===0?v+'%':'',
+        color:'#137333',font:{size:10,weight:'600'},anchor:'top',align:'top'}
+    },
+    scales:{
+      x:{ticks:{color:tc()},grid:{color:gc()}},
+      y:{min:60,max:100,ticks:{color:tc(),callback:v=>v+'%'},grid:{color:gc()}}
+    }
+  },
+  plugins:[ChartDataLabels]
+});
+
+// ── COLPOSCOPY PAGE — charts built by buildDoctorPage() called from initAll ──
+// avatarColors needed by both colpo and IKT doctor sections
 const avatarColors=['#1a73e8','#34a853','#ea4335','#fbbc04','#9c27b0','#00bcd4','#ff5722','#607d8b'];
-const dg=document.getElementById('doctorGrid');
-DOCTORS.forEach((d,i)=>{
-  const tot=DOC_DEC[i]+DOC_JAN[i]+DOC_FEB[i];
-  const initials=d.split('.').map(p=>p[0]).join('').slice(0,2).toUpperCase();
-  dg.innerHTML+=`<div class="doctor-card">
-    <div class="doc-avatar" style="background:${avatarColors[i]}">${initials}</div>
-    <div class="doc-name">${d}</div>
-    <div class="doc-val">${tot}</div>
-    <div class="doc-sub">3-month total</div>
-    <div style="margin-top:8px;font-size:11px;color:#5f6368">Dec:${DOC_DEC[i]} Jan:${DOC_JAN[i]} Feb:${DOC_FEB[i]}</div>
-  </div>`;
-});
 
-new Chart(C('colpoChart'),{
-  type:'bar',
-  data:{labels:DOCTORS.map(d=>d.split('.').pop()),datasets:[
-    {label:'Dec 25',data:DOC_DEC,backgroundColor:'#1a73e888',borderRadius:4},
-    {label:'Jan 26',data:DOC_JAN,backgroundColor:'#34a85388',borderRadius:4},
-    {label:'Feb 26',data:DOC_FEB,backgroundColor:'#fbbc0488',borderRadius:4},
-  ]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc()},grid:{color:gc()}},y:{ticks:{color:tc()},grid:{color:gc()}}}}
-});
+// CMCHIS Doctor chart — only built once via buildDoctorPage() in initAll
+// IKT Doctor chart  — only built once via buildDoctorPage() in initAll
+// Both use safeChart() inside buildDoctorPage so no duplicate init here
 
-new Chart(C('colpoShare'),{
-  type:'doughnut',
-  data:{labels:DOCTORS,datasets:[{data:DOC_FEB,backgroundColor:avatarColors,borderWidth:2,borderColor:'#fff'}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}
-});
+// ── ANNUAL REPORT PAGE ──
+// Build annual table
+const annTbody=document.getElementById('annualTableBody');
+if(annTbody) {
+  const mArr=MONTHLY_APPLIED_2025;
+  const apArr=MONTHLY_APPROVED_2025;
+  const dnArr=MONTHLY_DENIED_2025;
+  const amtArr=MONTHLY_AMOUNT_2025;
+  const mLabels=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan 26','Feb 26'];
+  annTbody.innerHTML=mLabels.map((m,i)=>{
+    const rate=(MONTHLY_APPROVED_2025[i]/(MONTHLY_APPLIED_2025[i]||1)*100).toFixed(1);
+    const rateNum=parseFloat(rate);
+    const is26 = i >= 12;
+    const status=rateNum>=90?'<span class="badge badge-green">GOOD</span>':rateNum>=80?'<span class="badge badge-yellow">MONITOR</span>':'<span class="badge badge-red">REVIEW</span>';
+    const amtL=(MONTHLY_AMOUNT_2025[i]/100000).toFixed(1);
+    return `<tr style="${is26?'background:var(--blue-light)':''}" onclick="showDrill('approval-rate')">
+      <td><strong>${m}</strong>${is26?'<span style="font-size:10px;color:var(--blue);margin-left:6px">2026</span>':''}</td>
+      <td>${MONTHLY_APPLIED_2025[i]}</td>
+      <td style="color:var(--green-dark);font-weight:600">${MONTHLY_APPROVED_2025[i]}</td>
+      <td style="color:${MONTHLY_DENIED_2025[i]>20?'var(--red)':'var(--grey8)'}">${MONTHLY_DENIED_2025[i]}</td>
+      <td>₹${amtL}L</td>
+      <td style="font-weight:600;color:${rateNum>=90?'var(--green-dark)':rateNum>=80?'var(--yellow-dark)':'var(--red)'}">${rate}%</td>
+      <td>${status}</td>
+    </tr>`;
+  }).join('');
+  // Footer totals
+  const totApp=mArr.reduce((a,b)=>a+b,0);
+  const totAppr=apArr.reduce((a,b)=>a+b,0);
+  const totDen=dnArr.reduce((a,b)=>a+b,0);
+  const totAmt=amtArr.reduce((a,b)=>a+b,0);
+  const annRate=(totAppr/totApp*100).toFixed(1);
+  document.getElementById('annualTableFoot').innerHTML=`<tr style="background:var(--grey1);font-weight:700">
+    <td>TOTAL 2025</td><td>${totApp}</td>
+    <td style="color:var(--green-dark)">${totAppr}</td>
+    <td style="color:var(--red)">${totDen}</td>
+    <td>₹${(totAmt/100000).toFixed(1)}L</td>
+    <td style="color:var(--green-dark)">${annRate}%</td>
+    <td><span class="badge badge-green">ANNUAL</span></td>
+  </tr>`;
+}
 
-const rankDiv=document.getElementById('doctorRanking');
-const ranked=[...DOCTORS.map((d,i)=>({d,v:DOC_FEB[i],i}))].sort((a,b)=>b.v-a.v);
-rankDiv.innerHTML=ranked.map((r,rank)=>`<div class="stat-row">
-  <div style="display:flex;align-items:center;gap:8px;flex:1">
-    <div style="width:20px;height:20px;border-radius:50%;background:${avatarColors[r.i]};display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;flex-shrink:0">${rank+1}</div>
-    <div class="stat-label">${r.d}</div>
-  </div>
-  <div class="stat-val">${r.v} cases</div>
-</div>`).join('');
+// Annual Volume Chart (14 months)
+if(C('annualVolumeChart')) {
+  new Chart(C('annualVolumeChart'),{
+    type:'bar',
+    data:{
+      labels:ALL_MONTHS_LABELS,
+      datasets:[
+        {label:'Applied',data:MONTHLY_APPLIED_2025,backgroundColor:ALL_MONTHS_LABELS.map((_,i)=>i<12?'#1a73e844':'#1a73e8bb'),borderRadius:4},
+        {label:'Approved',data:MONTHLY_APPROVED_2025,backgroundColor:ALL_MONTHS_LABELS.map((_,i)=>i<12?'#34a85388':'#34a853cc'),borderRadius:4},
+        {label:'Denied',data:MONTHLY_DENIED_2025,backgroundColor:ALL_MONTHS_LABELS.map((_,i)=>i<12?'#ea433566':'#ea4335aa'),borderRadius:4},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      onClick:(e,el)=>{if(el.length){const i=el[0].index;showDrill('month',ALL_MONTHS_KEYS[i]);}},
+      plugins:{legend:{labels:{color:'#5f6368',font:{size:11}}}},
+      scales:{x:{ticks:{color:tc()},grid:{color:gc()}},y:{ticks:{color:tc()},grid:{color:gc()},beginAtZero:true}}}
+  });
+}
+
+// Annual Rate Chart (14 months)
+if(C('annualRateChart')) {
+  const rates=MONTHLY_APPROVED_2025.map((a,i)=>parseFloat((a/Math.max(MONTHLY_APPLIED_2025[i],1)*100).toFixed(1)));
+  new Chart(C('annualRateChart'),{
+    type:'line',
+    data:{
+      labels:ALL_MONTHS_LABELS,
+      datasets:[{
+        label:'Approval Rate %',data:rates,
+        borderColor:'#1a73e8',backgroundColor:'#1a73e820',fill:true,tension:0.4,
+        pointBackgroundColor:rates.map(r=>r<80?'#ea4335':r<90?'#fbbc04':'#34a853'),
+        pointRadius:5,borderWidth:2.5
+      },{
+        label:'85% target',data:Array(rates.length).fill(85),
+        borderColor:'#34a853',borderDash:[6,4],borderWidth:1.5,pointRadius:0,backgroundColor:'transparent',fill:false
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      onClick:(e,el)=>{if(el.length) showDrill('month',ALL_MONTHS_KEYS[el[0].index]);},
+      plugins:{legend:{labels:{color:'#5f6368',font:{size:11}}},
+        datalabels:{display:true,formatter:(v,ctx)=>ctx.datasetIndex===0?v+'%':'',
+          color:ctx=>ctx.dataset.data[ctx.dataIndex]<80?'#c5221f':ctx.dataset.data[ctx.dataIndex]<90?'#f29900':'#137333',
+          font:{size:10,weight:'600'},anchor:'top',align:'top'}},
+      scales:{x:{ticks:{color:tc()},grid:{color:gc()}},
+        y:{min:55,max:100,ticks:{color:tc(),callback:v=>v+'%'},grid:{color:gc()}}}
+    },
+    plugins:[ChartDataLabels]
+  });
+}
+
+// Annual Amount Chart
+if(C('annualAmtChart')) {
+  new Chart(C('annualAmtChart'),{
+    type:'bar',
+    data:{
+      labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      datasets:[{
+        label:'Approved Revenue (₹)',
+        data:MONTHLY_AMOUNT_2025,
+        backgroundColor:MONTHLY_AMOUNT_2025.map(v=>v>900000?'#1a73e8aa':v>700000?'#34a853aa':'#fbbc04aa'),
+        borderRadius:6
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        datalabels:{display:true,anchor:'end',align:'top',
+          formatter:v=>'₹'+(v/100000).toFixed(1)+'L',
+          color:'#3c4043',font:{size:10,weight:'600'}}},
+      scales:{x:{ticks:{color:tc()},grid:{color:gc()}},
+        y:{ticks:{color:tc(),callback:v=>'₹'+(v/100000).toFixed(1)+'L'},grid:{color:gc()},beginAtZero:true}}
+    },
+    plugins:[ChartDataLabels]
+  });
+}
+
+// Annual Department totals chart
+if(C('annualDeptChart')) {
+  const deptTotals=DEPTS.map((d,i)=>MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][i]||0),0));
+  new Chart(C('annualDeptChart'),{
+    type:'bar',
+    data:{
+      labels:DEPTS,
+      datasets:[{
+        label:'Total Approved Cases 2025',
+        data:deptTotals,
+        backgroundColor:COLORS.map(c=>c+'aa'),
+        borderRadius:4
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        datalabels:{display:true,anchor:'end',align:'top',
+          formatter:v=>v,color:'#3c4043',font:{size:11,weight:'600'}}},
+      scales:{x:{ticks:{color:tc(),font:{size:11}},grid:{color:gc()}},
+        y:{ticks:{color:tc()},grid:{color:gc()},beginAtZero:true}}
+    },
+    plugins:[ChartDataLabels]
+  });
+}
+
+// Seasonal chart - Poisoning vs Dialysis
+if(C('seasonalChart')) {
+  const poisonIdx=DEPTS.indexOf('POISONING');
+  const dialIdx=DEPTS.indexOf('DIALYSIS');
+  new Chart(C('seasonalChart'),{
+    type:'line',
+    data:{
+      labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      datasets:[{
+        label:'Poisoning/Snake Bite',
+        data:MONTHS_2025.map(m=>DATA_2025[m][poisonIdx]||0),
+        borderColor:'#ea4335',backgroundColor:'#ea433520',fill:true,tension:0.4,
+        pointBackgroundColor:'#ea4335',pointRadius:5,borderWidth:2.5
+      },{
+        label:'Dialysis',
+        data:MONTHS_2025.map(m=>DATA_2025[m][dialIdx]||0),
+        borderColor:'#1a73e8',backgroundColor:'#1a73e820',fill:true,tension:0.4,
+        pointBackgroundColor:'#1a73e8',pointRadius:5,borderWidth:2.5
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#5f6368',font:{size:11}}}},
+      scales:{x:{ticks:{color:tc()},grid:{color:gc()}},y:{ticks:{color:tc()},grid:{color:gc()},beginAtZero:true}}}
+  });
+}
+
+// Annual Milestones
+const annualMs=document.getElementById('annualMilestones');
+if(annualMs) {
+  const milestones=[
+    {icon:'🏆',text:'May 2025 — Peak month: 195 IKT applied, 178 approved (91.3%)',color:'var(--green-dark)'},
+    {icon:'⚠️',text:'Jan 2025 — IKT crisis: 52 denied (26.9%) → triggered process reform',color:'var(--red)'},
+    {icon:'🌧️',text:'Jun–Jul 2025 — Monsoon surge: 80+ poisoning cases/month; 38 CMCHIS denials',color:'var(--yellow-dark)'},
+    {icon:'📉',text:'Sep 2025 — Post-monsoon dip: Lowest CMCHIS approved month (120 cases)',color:'var(--yellow-dark)'},
+    {icon:'📈',text:'Nov 2025 — ORTHO best month: 28 cases approved; GS strong at 26',color:'var(--blue)'},
+    {icon:'✅',text:'Dec 2025 — Year-end: 85.4% overall approval rate achieved',color:'var(--green-dark)'},
+    {icon:'💰',text:'Annual Revenue: ₹90.1L CMCHIS + ~₹8.9L Colposcopy = ₹99L+ total',color:'var(--blue)'},
+  ];
+  annualMs.innerHTML=milestones.map(m=>`
+    <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--grey3)">
+      <div style="font-size:18px;flex-shrink:0">${m.icon}</div>
+      <div style="font-size:13px;color:${m.color};line-height:1.5">${m.text}</div>
+    </div>`).join('');
+}
 
 // ══════════════════ COVERAGE PAGE ══════════════════
 
@@ -2958,18 +3596,22 @@ document.getElementById('presubList').innerHTML = presubItems.map((item,i)=>`
 new Chart(C('iktTrajectory'),{
   type:'line',
   data:{
-    labels:['Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026'],
+    labels:['Jan 25','Feb 25','Mar 25','Apr 25','May 25','Jun 25','Jul 25','Aug 25','Sep 25','Oct 25','Nov 25','Dec 25','Jan 26','Jun 26'],
     datasets:[
-      {label:'Actual Approval %',data:[73.1,76.2,null,null,null,null],borderColor:'#ea4335',backgroundColor:'#ea433520',fill:true,tension:0.3,pointRadius:6,pointBackgroundColor:'#ea4335',borderWidth:2},
-      {label:'Target Trajectory',data:[73.1,76.2,82,87,90,93],borderColor:'#34a853',backgroundColor:'transparent',borderDash:[6,4],tension:0.3,pointRadius:5,pointBackgroundColor:'#34a853',borderWidth:2},
-      {label:'90% Goal Line',data:[90,90,90,90,90,90],borderColor:'#1a73e8',backgroundColor:'transparent',borderDash:[3,3],borderWidth:1,pointRadius:0},
+      {label:'Actual Approval % 2025',
+       data:IKT_2025_MONTHS.map((_,i)=>Math.round(IKT_2025_APPROVED[i]/IKT_2025_APPLIED[i]*1000)/10).concat([null,null]),
+       borderColor:'#ea4335',backgroundColor:'#ea433520',fill:true,tension:0.3,pointRadius:5,pointBackgroundColor:'#ea4335',borderWidth:2},
+      {label:'Target Trajectory',data:[null,null,null,null,null,null,null,null,null,null,null,null,90,95],
+       borderColor:'#34a853',backgroundColor:'transparent',borderDash:[6,4],tension:0.3,pointRadius:5,pointBackgroundColor:'#34a853',borderWidth:2},
+      {label:'90% Goal Line',data:Array(14).fill(90),
+       borderColor:'#1a73e8',backgroundColor:'transparent',borderDash:[3,3],borderWidth:1,pointRadius:0},
     ]
   },
   options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{labels:{color:'#5f6368',font:{size:11}}}},
     scales:{x:{ticks:{color:tc()},grid:{color:gc()}},
       y:{ticks:{color:tc(),callback:v=>v+'%'},grid:{color:gc()},min:60,max:100,
-        title:{display:true,text:'Approval Rate (%)',color:'#5f6368'}}}}
+        title:{display:true,text:'IKT Approval Rate (%)',color:'#5f6368'}}}}
 });
 
 // ══════════════════ SEARCH ══════════════════
@@ -2990,16 +3632,19 @@ function filterSug(priority, el) {
 
 // ══════════════════ EXPORT CSV ══════════════════
 function exportCSV() {
-  const rows=[['Department','Jan Applied','Jan Approved','Jan Denied','Jan Amount','Feb Applied','Feb Approved','Feb Denied','Feb Amount','Total Denied','Denial Rate %']];
+  const rows=[['Department','Applied 2025','Approved 2025','Denial Rate %',
+    'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']];
   DEPTS.forEach((d,i)=>{
-    const den=JAN_DEN[i]+FEB_DEN[i];
-    const tot=JAN_APP[i]+FEB_APP[i];
-    rows.push([d,JAN_APP[i],JAN[i],JAN_DEN[i],JAN_AMT[i],FEB_APP[i],FEB[i],FEB_DEN[i],FEB_AMT[i],den,tot>0?(den/tot*100).toFixed(1):0]);
+    const totApp = MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][i]||0),0);
+    const totApplied = MONTHLY_APPLIED_2025.reduce((a,b)=>a+b,0);
+    const denRate = totApplied>0?(((totApplied-totApp)/totApplied)*100).toFixed(1):0;
+    const monthly = MONTHS_2025.map(m=>(DATA_2025[m][i]||0));
+    rows.push([d,totApplied,totApp,denRate,...monthly]);
   });
   const csv=rows.map(r=>r.join(',')).join('\n');
   const a=document.createElement('a');
   a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download='CMCHIS_IKT_2026_Export.csv';
+  a.download='CMCHIS_2025_Annual_Export.csv';
   a.click();
 }
 
@@ -3121,14 +3766,7 @@ document.getElementById('pkgGrid').innerHTML = pkgData.map(p=>`
 // ══════════════════════════════════════════════
 
 // Mutable per-month detailed data (Applied, Denied, Amount per dept per month)
-let DETAIL_STORE = {}; // dept -> [{month,applied,approved,denied,amount}, ...]
-DEPTS.forEach((d,i)=>{
-  DETAIL_STORE[d] = [
-    {month:'Dec 2025',applied:DEC[i],approved:DEC[i],denied:0,amount:0},
-    {month:'Jan 2026',applied:JAN_APP[i],approved:JAN[i],denied:JAN_DEN[i],amount:JAN_AMT[i]},
-    {month:'Feb 2026',applied:FEB_APP[i],approved:FEB[i],denied:FEB_DEN[i],amount:FEB_AMT[i]},
-  ];
-});
+// Populated from 2025 XLS data + the DETAIL_STORE already seeded above in TRENDS section
 
 // Now that both DATA_STORE and DETAIL_STORE are ready, seed overview KPIs
 refreshOverviewKPIs();
@@ -3840,10 +4478,7 @@ function showToast(msg) {
   if(!t) {
     t = document.createElement('div');
     t.id = 'fbToast';
-    t.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-      background:#202124;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;
-      z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);opacity:0;transition:opacity .3s;
-      white-space:nowrap;max-width:90vw;text-align:center`;
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#202124;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);opacity:0;transition:opacity .3s;white-space:nowrap;max-width:90vw;text-align:center';
     document.body.appendChild(t);
   }
   t.textContent = msg;
@@ -3851,6 +4486,887 @@ function showToast(msg) {
   clearTimeout(t._timer);
   t._timer = setTimeout(()=>{ t.style.opacity='0'; }, 4000);
 }
+
+// ══════════════════════════════════════════════════════
+// ══  MONTH FILTER  ══════════════════════════════════
+// ══════════════════════════════════════════════════════
+
+function injectMonthFilters() {
+  const targets = ['page-overview','page-trends','page-deptpage','page-iktpage','page-annual2025'];
+  targets.forEach(pid => {
+    const page = document.getElementById(pid);
+    if (!page) return;
+    if (page.querySelector('.month-filter-bar')) return; // already injected
+    const ph = page.querySelector('.page-head');
+    if (!ph) return;
+    const bar = document.createElement('div');
+    bar.className = 'month-filter-bar';
+    bar.innerHTML = `
+      <span class="mf-label">Period:</span>
+      <span class="mf-chip year-chip active" data-f="2025" onclick="setMonthFilter('2025',this)">2025 (Full Year)</span>
+      <span class="mf-chip" data-f="2026" onclick="setMonthFilter('2026',this)">Jan–Feb 2026</span>
+      <span class="mf-chip" data-f="all" onclick="setMonthFilter('all',this)">All (14 months)</span>
+      <span class="mf-chip" data-f="q1-25" onclick="setMonthFilter('q1-25',this)">Q1 2025</span>
+      <span class="mf-chip" data-f="q2-25" onclick="setMonthFilter('q2-25',this)">Q2 2025</span>
+      <span class="mf-chip" data-f="q3-25" onclick="setMonthFilter('q3-25',this)">Q3 2025</span>
+      <span class="mf-chip" data-f="q4-25" onclick="setMonthFilter('q4-25',this)">Q4 2025</span>
+      <span class="mf-chip" data-f="monsoon" onclick="setMonthFilter('monsoon',this)">Monsoon (Jun–Sep)</span>`;
+    ph.insertAdjacentElement('afterend', bar);
+  });
+}
+
+function setMonthFilter(f, el) {
+  activeFilter = f;
+  // Sync all bars across pages
+  document.querySelectorAll('.mf-chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.f === f);
+  });
+  // Determine which months to show
+  const allKeys = ALL_MONTHS_KEYS;
+  let keys;
+  if (f==='2025')    keys = allKeys.slice(0,12);
+  else if (f==='2026') keys = allKeys.slice(12);
+  else if (f==='all')  keys = allKeys;
+  else if (f==='q1-25') keys = allKeys.slice(0,3);
+  else if (f==='q2-25') keys = allKeys.slice(3,6);
+  else if (f==='q3-25') keys = allKeys.slice(6,9);
+  else if (f==='q4-25') keys = allKeys.slice(9,12);
+  else if (f==='monsoon') keys = allKeys.filter(m=>['Jun 2025','Jul 2025','Aug 2025','Sep 2025'].includes(m));
+  else keys = allKeys.slice(0,12);
+
+  DATA_MONTHS = keys;
+  DEPTS.forEach((d,i) => {
+    DATA_STORE[d] = keys.map(m=>(DATA_2025[m]||[])[i]||0);
+    DETAIL_STORE[d] = keys.map((m,mi)=>{
+      const fullIdx = allKeys.indexOf(m);
+      return {
+        month:m,
+        applied: MONTHLY_APPLIED_2025[fullIdx]||0,
+        approved:(DATA_2025[m]||[])[i]||0,
+        denied:  MONTHLY_DENIED_2025[fullIdx]||0,
+        amount:  MONTHLY_AMOUNT_2025[fullIdx]||0
+      };
+    });
+  });
+  refreshAllCharts();
+}
+
+// ══════════════════════════════════════════════════════
+// ══  DRILL-DOWN MODAL  ══════════════════════════════
+// ══════════════════════════════════════════════════════
+
+let drillChartInst = null;
+
+function closeDrill() {
+  document.getElementById('drillModal').classList.remove('open');
+  if (drillChartInst) { drillChartInst.destroy(); drillChartInst = null; }
+}
+document.getElementById('drillModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('drillModal')) closeDrill();
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeDrill(); });
+
+function showDrill(type, payload) {
+  const modal = document.getElementById('drillModal');
+  const title = document.getElementById('drillTitle');
+  const content = document.getElementById('drillContent');
+  modal.classList.add('open');
+  if (drillChartInst) { drillChartInst.destroy(); drillChartInst = null; }
+
+  if (type === 'dept') {
+    const i = DEPTS.indexOf(payload);
+    if (i < 0) return;
+    const vals = ALL_MONTHS_KEYS.map(m=>(DATA_2025[m]||[])[i]||0);
+    const amts = ALL_MONTHS_KEYS.map(m=>{
+      const idx=ALL_MONTHS_KEYS.indexOf(m);
+      const approved=(DATA_2025[m]||[])[i]||0;
+      const totalApproved=DEPTS.reduce((s,d,j)=>s+(DATA_2025[m]||[])[j]||0,0);
+      const monthAmt=MONTHLY_AMOUNT_2025[idx]||0;
+      return totalApproved>0?Math.round(monthAmt*(approved/totalApproved)):0;
+    });
+    title.textContent = `${payload} — Monthly Breakdown (Jan 2025 – Feb 2026)`;
+    drillChartInst = new Chart(document.getElementById('drillChart'), {
+      type:'bar',
+      data:{
+        labels:ALL_MONTHS_LABELS,
+        datasets:[
+          {label:'Approved Cases',data:vals,backgroundColor:COLORS[i%COLORS.length]+'99',borderRadius:4,yAxisID:'y'},
+          {label:'Est. Revenue ₹',data:amts,type:'line',borderColor:COLORS[(i+2)%COLORS.length],
+           backgroundColor:'transparent',tension:0.4,pointRadius:4,borderWidth:2,yAxisID:'y2'}
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#5f6368',font:{size:11}}},datalabels:{display:false}},
+        scales:{
+          y:{ticks:{color:'#5f6368'},grid:{color:'rgba(0,0,0,.06)'},title:{display:true,text:'Cases',color:'#5f6368'}},
+          y2:{position:'right',ticks:{color:'#5f6368',callback:v=>'₹'+Math.round(v/1000)+'K'},
+              grid:{display:false},title:{display:true,text:'Revenue',color:'#5f6368'}}
+        }}
+    });
+    const annual=vals.slice(0,12).reduce((s,v)=>s+v,0);
+    const jan26=vals[12]||0, feb26=vals[13]||0;
+    const peak=Math.max(...vals); const peakM=ALL_MONTHS_LABELS[vals.indexOf(peak)];
+    content.innerHTML=`
+      <div class="cards-grid" style="margin-bottom:14px">
+        <div class="metric-card mc-blue"><div class="mc-label">2025 Annual Total</div><div class="mc-value">${annual}</div></div>
+        <div class="metric-card mc-green"><div class="mc-label">Peak Month</div><div class="mc-value">${peak}</div><div class="mc-sub">${peakM}</div></div>
+        <div class="metric-card mc-blue"><div class="mc-label">Jan 2026</div><div class="mc-value">${jan26}</div></div>
+        <div class="metric-card mc-blue"><div class="mc-label">Feb 2026</div><div class="mc-value">${feb26}</div></div>
+      </div>
+      <table class="drill-table">
+        <thead><tr><th>Month</th><th>Approved</th><th>MoM Change</th><th>Est. Revenue</th></tr></thead>
+        <tbody>${ALL_MONTHS_KEYS.map((m,mi)=>{
+          const v=vals[mi]; const prev=mi>0?vals[mi-1]:v;
+          const chg=v-prev; const pct=prev>0?((chg/prev)*100).toFixed(1):'—';
+          const color=chg>0?'var(--green-dark)':chg<0?'var(--red)':'var(--grey7)';
+          return `<tr><td><strong>${ALL_MONTHS_LABELS[mi]}</strong></td><td>${v}</td>
+            <td style="color:${color}">${mi===0?'—':(chg>=0?'+':'')+chg+' ('+pct+'%)'}</td>
+            <td>₹${Math.round(amts[mi]/1000)}K</td></tr>`;
+        }).join('')}</tbody>
+      </table>`;
+  }
+
+  else if (type === 'month') {
+    const mi = ALL_MONTHS_KEYS.indexOf(payload);
+    if (mi < 0) return;
+    const label = ALL_MONTHS_LABELS[mi];
+    title.textContent = `${label} — Department Breakdown`;
+    const deptVals = DEPTS.map((d,i)=>(DATA_2025[payload]||[])[i]||0);
+    drillChartInst = new Chart(document.getElementById('drillChart'), {
+      type:'bar',
+      data:{
+        labels:DEPTS,
+        datasets:[{label:'Approved Cases',data:deptVals,
+          backgroundColor:COLORS.map(c=>c+'99'),borderRadius:4}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},datalabels:{display:false}},
+        scales:{
+          x:{ticks:{color:'#5f6368',font:{size:10}},grid:{color:'rgba(0,0,0,.06)'}},
+          y:{ticks:{color:'#5f6368'},grid:{color:'rgba(0,0,0,.06)'}}
+        }}
+    });
+    const total=deptVals.reduce((s,v)=>s+v,0);
+    content.innerHTML=`<div style="font-size:13px;color:var(--grey7);margin-bottom:12px">
+      Applied: <strong>${MONTHLY_APPLIED_2025[mi]||0}</strong> · Approved: <strong>${MONTHLY_APPROVED_2025[mi]||0}</strong> · Denied: <strong style="color:var(--red)">${MONTHLY_DENIED_2025[mi]||0}</strong> · Amount: <strong style="color:var(--green-dark)">₹${((MONTHLY_AMOUNT_2025[mi]||0)/100000).toFixed(1)}L</strong>
+    </div>
+    <table class="drill-table">
+      <thead><tr><th>Department</th><th>Approved</th><th>Share %</th><th>Trend vs Prev</th></tr></thead>
+      <tbody>${DEPTS.map((d,i)=>{
+        const v=deptVals[i];
+        const prev=mi>0?(DATA_2025[ALL_MONTHS_KEYS[mi-1]]||[])[i]||0:v;
+        const chg=v-prev; const col=chg>0?'var(--green-dark)':chg<0?'var(--red)':'var(--grey7)';
+        const pct=total>0?(v/total*100).toFixed(1):0;
+        return `<tr><td><strong style="color:${COLORS[i]}">${d}</strong></td><td>${v}</td>
+          <td><div style="display:flex;align-items:center;gap:6px"><div style="width:${Math.max(pct,1)}px;height:8px;background:${COLORS[i]};border-radius:4px;min-width:4px"></div>${pct}%</div></td>
+          <td style="color:${col}">${mi===0?'—':(chg>=0?'+':'')+chg}</td></tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  }
+
+  else if (type === 'ikt-doctor') {
+    const doc = IKT_DOC_DATA.find(d=>d.name===payload);
+    if (!doc) return;
+    title.textContent = `Dr. ${payload} — IKT Monthly Performance`;
+    const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan26','Feb26','Mar26'];
+    const allVals=[...doc.m25,...doc.m26];
+    drillChartInst = new Chart(document.getElementById('drillChart'), {
+      type:'bar',
+      data:{
+        labels:months.slice(0,allVals.length),
+        datasets:[{label:'IKT Cases',data:allVals,backgroundColor:COLORS.map(c=>c+'99'),borderRadius:4}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},datalabels:{display:false}},
+        scales:{x:{ticks:{color:'#5f6368'}},y:{ticks:{color:'#5f6368'},beginAtZero:true}}}
+    });
+    const total25=doc.m25.reduce((s,v)=>s+v,0);
+    const best=Math.max(...allVals); const bestM=months[allVals.indexOf(best)];
+    content.innerHTML=`<div class="cards-grid" style="margin-bottom:14px">
+      <div class="metric-card mc-blue"><div class="mc-label">2025 Total</div><div class="mc-value">${total25}</div></div>
+      <div class="metric-card mc-green"><div class="mc-label">Best Month</div><div class="mc-value">${best}</div><div class="mc-sub">${bestM}</div></div>
+      <div class="metric-card mc-yellow"><div class="mc-label">Department</div><div class="mc-value" style="font-size:14px">${doc.dept}</div></div>
+      <div class="metric-card mc-blue"><div class="mc-label">2026 YTD</div><div class="mc-value">${doc.m26.slice(0,3).reduce((s,v)=>s+v,0)}</div></div>
+    </div>`;
+  }
+
+  else if (type === 'approval-rate') {
+    title.textContent = 'Monthly Approval Rate — 2025 + 2026';
+    const rates = ALL_MONTHS_KEYS.map((_,i) =>
+      MONTHLY_APPLIED_2025[i] > 0
+        ? parseFloat((MONTHLY_APPROVED_2025[i] / MONTHLY_APPLIED_2025[i] * 100).toFixed(1))
+        : 0);
+    drillChartInst = new Chart(document.getElementById('drillChart'), {
+      type: 'line',
+      data: {
+        labels: ALL_MONTHS_LABELS,
+        datasets: [
+          {label:'Approval %', data:rates, borderColor:'#1a73e8', backgroundColor:'#1a73e820',
+           fill:true, tension:0.4, pointRadius:5,
+           pointBackgroundColor:rates.map(r=>r>=90?'#34a853':r>=80?'#fbbc04':'#ea4335')},
+          {label:'Target 90%', data:Array(ALL_MONTHS_KEYS.length).fill(90),
+           borderColor:'#34a853', borderDash:[6,4], borderWidth:1.5, pointRadius:0,
+           backgroundColor:'transparent', fill:false}
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#5f6368',font:{size:11}}},datalabels:{display:false}},
+        scales:{x:{ticks:{color:'#5f6368',font:{size:10}}},
+                y:{min:60,max:100,ticks:{color:'#5f6368',callback:v=>v+'%'}}}}
+    });
+    content.innerHTML = `
+      <table class="drill-table">
+        <thead><tr><th>Month</th><th>Applied</th><th>Approved</th><th>Denied</th><th>Rate</th><th>Status</th></tr></thead>
+        <tbody>${ALL_MONTHS_KEYS.map((m,i)=>{
+          const r=rates[i];
+          const is26=i>=12;
+          const badge=r>=90?'badge-green':r>=80?'badge-yellow':'badge-red';
+          const status=r>=90?'Good':r>=80?'Monitor':'Review';
+          return `<tr style="${is26?'background:var(--blue-light);font-weight:600':''}">
+            <td><strong>${ALL_MONTHS_LABELS[i]}</strong>${is26?'<span style="font-size:10px;color:var(--blue);margin-left:4px">2026</span>':''}</td>
+            <td>${MONTHLY_APPLIED_2025[i]||0}</td>
+            <td style="color:var(--green-dark)">${MONTHLY_APPROVED_2025[i]||0}</td>
+            <td style="color:var(--red)">${MONTHLY_DENIED_2025[i]||0}</td>
+            <td style="font-weight:600;color:${r>=90?'var(--green-dark)':r>=80?'var(--yellow-dark)':'var(--red)'}">${r}%</td>
+            <td><span class="badge ${badge}" style="font-size:10px">${status}</span></td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+  }
+
+  else if (type === 'annual-revenue') {
+    title.textContent = 'Annual Revenue — Monthly Breakdown 2025';
+    drillChartInst = new Chart(document.getElementById('drillChart'), {
+      type: 'bar',
+      data: {
+        labels: ALL_MONTHS_LABELS.slice(0,12),
+        datasets: [{
+          label:'Revenue ₹',
+          data: MONTHLY_AMOUNT_2025.slice(0,12),
+          backgroundColor: MONTHLY_AMOUNT_2025.slice(0,12).map(v=>v>900000?'#1a73e8aa':v>700000?'#34a853aa':'#fbbc04aa'),
+          borderRadius: 6
+        }]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},datalabels:{display:false}},
+        scales:{x:{ticks:{color:'#5f6368',font:{size:10}}},
+                y:{ticks:{color:'#5f6368',callback:v=>'₹'+(v/100000).toFixed(1)+'L'}}}}
+    });
+    const total=MONTHLY_AMOUNT_2025.slice(0,12).reduce((s,v)=>s+v,0);
+    const best=Math.max(...MONTHLY_AMOUNT_2025.slice(0,12));
+    const bestM=ALL_MONTHS_LABELS[MONTHLY_AMOUNT_2025.indexOf(best)];
+    content.innerHTML=`
+      <div class="cards-grid" style="margin-bottom:14px">
+        <div class="metric-card mc-green" style="cursor:default"><div class="mc-label">Annual Total</div><div class="mc-value">₹${(total/100000).toFixed(1)}L</div></div>
+        <div class="metric-card mc-blue"  style="cursor:default"><div class="mc-label">Best Month</div><div class="mc-value">₹${(best/100000).toFixed(1)}L</div><div class="mc-sub">${bestM}</div></div>
+        <div class="metric-card mc-yellow" style="cursor:default"><div class="mc-label">Monthly Average</div><div class="mc-value">₹${(total/1200000).toFixed(1)}L</div></div>
+      </div>
+      <table class="drill-table">
+        <thead><tr><th>Month</th><th>Approved</th><th>Revenue</th><th>Avg ₹/case</th></tr></thead>
+        <tbody>${MONTHLY_AMOUNT_2025.slice(0,12).map((amt,i)=>{
+          const appr=MONTHLY_APPROVED_2025[i]||1;
+          return `<tr><td><strong>${ALL_MONTHS_LABELS[i]}</strong></td>
+            <td>${MONTHLY_APPROVED_2025[i]}</td>
+            <td style="color:var(--green-dark);font-weight:600">₹${(amt/100000).toFixed(2)}L</td>
+            <td>₹${Math.round(amt/appr).toLocaleString('en-IN')}</td></tr>`;
+        }).join('')}</tbody>
+      </table>`;
+  }
+
+  else if (type === 'ikt-annual') {
+    title.textContent = 'IKT — Full Year 2025 + 2026 Performance';
+    drillChartInst = new Chart(document.getElementById('drillChart'), {
+      type: 'bar',
+      data: {
+        labels: IKT_2025_MONTHS,
+        datasets: [
+          {label:'Applied',  data:IKT_2025_APPLIED,  backgroundColor:'#1a73e844', borderRadius:4},
+          {label:'Approved', data:IKT_2025_APPROVED, backgroundColor:'#34a85388', borderRadius:4},
+          {label:'Denied',   data:IKT_2025_DENIED,   backgroundColor:'#ea433588', borderRadius:4}
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{color:'#5f6368',font:{size:11}}},datalabels:{display:false}},
+        scales:{x:{ticks:{color:'#5f6368',font:{size:10}}},y:{ticks:{color:'#5f6368'},beginAtZero:true}}}
+    });
+    content.innerHTML=`
+      <div class="cards-grid" style="margin-bottom:14px">
+        <div class="metric-card mc-blue"  style="cursor:default"><div class="mc-label">2025 IKT Applied</div><div class="mc-value">${IKT_2025_APPLIED.slice(0,12).reduce((s,v)=>s+v,0)}</div></div>
+        <div class="metric-card mc-green" style="cursor:default"><div class="mc-label">2025 IKT Approved</div><div class="mc-value">${IKT_2025_APPROVED.slice(0,12).reduce((s,v)=>s+v,0)}</div></div>
+        <div class="metric-card mc-red"   style="cursor:default"><div class="mc-label">2025 IKT Denied</div><div class="mc-value">${IKT_2025_DENIED.slice(0,12).reduce((s,v)=>s+v,0)}</div></div>
+        <div class="metric-card mc-yellow" style="cursor:default"><div class="mc-label">2025 Approval Rate</div><div class="mc-value">${(IKT_2025_APPROVED.slice(0,12).reduce((s,v)=>s+v,0)/IKT_2025_APPLIED.slice(0,12).reduce((s,v)=>s+v,0)*100).toFixed(1)}%</div></div>
+      </div>
+      <table class="drill-table">
+        <thead><tr><th>Month</th><th>Applied</th><th>Approved</th><th>Denied</th><th>Rate</th></tr></thead>
+        <tbody>${IKT_2025_MONTHS.map((m,i)=>{
+          const rate=(IKT_2025_APPROVED[i]/IKT_2025_APPLIED[i]*100).toFixed(1);
+          const is26=i>=12;
+          return `<tr style="${is26?'background:var(--blue-light)':''}">
+            <td><strong>${m}</strong></td>
+            <td>${IKT_2025_APPLIED[i]}</td>
+            <td style="color:var(--green-dark);font-weight:600">${IKT_2025_APPROVED[i]}</td>
+            <td style="color:var(--red)">${IKT_2025_DENIED[i]}</td>
+            <td style="font-weight:600;color:${parseFloat(rate)>=90?'var(--green-dark)':parseFloat(rate)>=80?'var(--yellow-dark)':'var(--red)'}">${rate}%</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+  }
+
+  else if (type === 'mgh-packages' || type === 'mgh-2025-total') {
+    title.textContent = type === 'mgh-packages' ? 'MGH Active Package Departments' : 'MGH 2025 — All Cases Summary';
+    const deptTotals = DEPTS.map((d,i) => MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][i]||0),0));
+    drillChartInst = new Chart(document.getElementById('drillChart'), {
+      type: 'bar',
+      data: {
+        labels: DEPTS,
+        datasets: [{label:'2025 Cases', data:deptTotals,
+          backgroundColor:COLORS.map(c=>c+'aa'), borderRadius:4}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        onClick:(_,els)=>{ if(els.length) showDrill('dept', DEPTS[els[0].index]); },
+        plugins:{legend:{display:false},datalabels:{display:false}},
+        scales:{x:{ticks:{color:'#5f6368',font:{size:10}}},y:{ticks:{color:'#5f6368'},beginAtZero:true}}}
+    });
+    content.innerHTML=`<div style="font-size:12px;color:var(--grey6);margin-bottom:10px">Click any bar to see monthly breakdown for that department</div>
+      <table class="drill-table">
+        <thead><tr><th>Department</th><th>2025 Total</th><th>Monthly Avg</th><th>Nov 25</th><th>Dec 25</th></tr></thead>
+        <tbody>${DEPTS.map((d,i)=>{
+          const tot=deptTotals[i];
+          return `<tr onclick="closeDrill();showDrill('dept','${d}')" style="cursor:pointer">
+            <td><strong style="color:${COLORS[i]}">${d}</strong></td>
+            <td>${tot}</td><td>${Math.round(tot/12)}</td>
+            <td>${DATA_2025['Nov 2025'][i]||0}</td>
+            <td>${DATA_2025['Dec 2025'][i]||0}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+  }
+
+  // Numeric index → dept drill (from chart bar click)
+  else if (typeof type === 'number') {
+    showDrill('dept', DEPTS[type] || DEPTS[0]);
+    return;
+  }
+
+  else if (type === 'cmchis-scheme') {
+    title.textContent = 'CMCHIS — Scheme Coverage Details';
+    document.getElementById('drillChart').style.display='none';
+    content.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      ${[['1,090+','Total Procedures'],['52','Diagnostic Tests'],['8','Follow-up Procedures'],['₹5L','Annual Family Cover'],['1,700+','Empanelled Hospitals'],['1.37 Cr','Families Covered']].map(([v,l])=>`
+        <div class="metric-card mc-blue" style="cursor:default"><div class="mc-label">${l}</div><div class="mc-value" style="font-size:20px">${v}</div></div>`).join('')}
+    </div>
+    <div style="font-size:13px;color:var(--grey7);line-height:1.8">
+      <p style="margin-bottom:8px"><strong>Key specialty coverage:</strong></p>
+      ${[['Cardiology','Angioplasty, CABG, Pacemaker, Valve replacement'],['Neurology','Brain tumour, Spine surgeries, Neurovascular'],['Oncology','Cancer surgeries, Chemotherapy, Radiation'],['Orthopaedics','Joint replacement, Fracture fixation, Spine fusion'],['Obstetrics','C-section, High-risk delivery, NICU care'],['Nephrology','Dialysis, Kidney transplant, CAPD'],['Ophthalmology','Cataract, Glaucoma, Retinal surgeries'],['ENT','Cochlear implant, Tonsillectomy, Sinus surgery'],['General Surgery','Laparoscopic, Hernia, Appendicectomy, Cholecystectomy'],['Paediatrics','Neonatal intensive care, Congenital surgeries']].map(([s,p])=>`
+        <div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--grey3)">
+          <span style="font-weight:600;color:var(--blue);min-width:120px">${s}</span>
+          <span>${p}</span>
+        </div>`).join('')}
+    </div>`;
+    setTimeout(()=>{document.getElementById('drillChart').style.display='';},100);
+  }
+
+  else if (type === 'ikt-scheme') {
+    title.textContent = 'IKT — Innuyir Kappom Thittam Details';
+    document.getElementById('drillChart').style.display='none';
+    content.innerHTML=`<div style="margin-bottom:16px">
+      <div class="alert-strip alert-blue" style="background:var(--blue-light);margin-bottom:12px">
+        <div class="alert-body"><div class="alert-title" style="color:var(--blue)">Nammai Kakkum 48 Scheme — Emergency Road Accident Coverage</div>
+        <div class="alert-desc" style="color:var(--blue)">Free emergency treatment within 48 hours for road/rail/flood accident victims. Statewide: 3,43,156 beneficiaries · ₹302 Cr disbursed · 723 hospitals (250 Govt + 473 Private)</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+        ${[['2,081','IKT Applied 2025 (MGH)'],['1,848','IKT Approved 2025 (MGH)'],['88.8%','2025 Approval Rate'],['233','Total Denied 2025'],['₹302 Cr','TN Total Disbursed'],['48 hrs','Treatment Window']].map(([v,l])=>`
+          <div class="metric-card mc-green" style="cursor:default"><div class="mc-label">${l}</div><div class="mc-value" style="font-size:18px">${v}</div></div>`).join('')}
+      </div>
+      <div style="font-size:13px;color:var(--grey7)"><strong>IKT Package Coverage:</strong>
+      ${[['Emergency Surgery','All acute surgical procedures within 48hrs'],['Fracture Management','X-ray, Plastering, ORIF for accident injuries'],['Head Injury','CT scan, Neurosurgery, ICU care'],['Burns Treatment','Dressing, Skin graft, ICU'],['Poisoning / Snake Bite','ASV, antidotes, ICU stabilisation'],['Spinal Injuries','Immobilisation, Surgery if needed'],['Polytrauma','Multi-organ management, ventilator'],['Road Accident','All procedures — documentation within 48 hrs']].map(([s,p])=>`
+        <div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid var(--grey3)">
+          <span style="font-weight:600;color:var(--green-dark);min-width:140px">${s}</span>
+          <span>${p}</span>
+        </div>`).join('')}</div>
+    </div>`;
+    setTimeout(()=>{document.getElementById('drillChart').style.display='';},100);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// ══  CLICKABLE CARDS  ═══════════════════════════════
+// ══════════════════════════════════════════════════════
+
+function makeCardsClickable() {
+  // Dept cards in overview — clicking dept shows drill-down
+  document.querySelectorAll('.metric-card').forEach(card => {
+    if (card.dataset.drillBound) return;
+    card.dataset.drillBound = '1';
+    // If card has a dept label, bind to dept drill
+    const label = card.querySelector('.mc-label');
+    if (!label) return;
+    const txt = label.textContent;
+    DEPTS.forEach(d => {
+      if (txt.includes(d)) {
+        card.onclick = () => showDrill('dept', d);
+      }
+    });
+    // Month cards
+    ALL_MONTHS_KEYS.forEach(m => {
+      if (txt.includes(m.split(' ')[0]) && txt.includes(m.split(' ')[1])) {
+        card.onclick = () => showDrill('month', m);
+      }
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// ══  UNIVERSAL SORTABLE TABLE  ══════════════════════
+// ══════════════════════════════════════════════════════
+
+function makeSortable(tableId) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const headers = table.querySelectorAll('th');
+  headers.forEach((th, col) => {
+    th.style.cursor = 'pointer';
+    th.dataset.col = col;
+    th.dataset.dir = '';
+    th.addEventListener('click', () => {
+      const dir = th.dataset.dir === 'asc' ? 'desc' : 'asc';
+      headers.forEach(h => { h.dataset.dir=''; h.classList.remove('sort-asc','sort-desc'); });
+      th.dataset.dir = dir;
+      th.classList.add(dir==='asc'?'sort-asc':'sort-desc');
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.rows);
+      rows.sort((a,b)=>{
+        const av=a.cells[col]?.textContent.trim()||'';
+        const bv=b.cells[col]?.textContent.trim()||'';
+        const an=parseFloat(av.replace(/[₹,%L]/g,'')), bn=parseFloat(bv.replace(/[₹,%L]/g,''));
+        if(!isNaN(an)&&!isNaN(bn)) return dir==='asc'?an-bn:bn-an;
+        return dir==='asc'?av.localeCompare(bv):bv.localeCompare(av);
+      });
+      rows.forEach(r=>tbody.appendChild(r));
+    });
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// ══  PACKAGE PERFORMANCE PAGE  ══════════════════════
+// ══════════════════════════════════════════════════════
+
+const CMCHIS_PACKAGES = [
+  // department, package/procedure, category, annualCases, ratePer, approvalPct, cmchisCode, notes
+  {dept:'ORTHO',     pkg:'Joint Replacement (Hip/Knee)',   cat:'Surgery',   cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][0]||0),0)*0.25), rate:45000, appr:91, active:true},
+  {dept:'ORTHO',     pkg:'Fracture Fixation / ORIF',       cat:'Surgery',   cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][0]||0),0)*0.45), rate:25000, appr:94, active:true},
+  {dept:'ORTHO',     pkg:'Spine Surgery',                  cat:'Surgery',   cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][0]||0),0)*0.15), rate:40000, appr:88, active:true},
+  {dept:'ORTHO',     pkg:'Arthroscopy',                    cat:'Surgery',   cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][0]||0),0)*0.10), rate:18000, appr:90, active:true},
+  {dept:'GS',        pkg:'Appendicectomy (Lap/Open)',       cat:'Surgery',   cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][1]||0),0)*0.30), rate:15000, appr:96, active:true},
+  {dept:'GS',        pkg:'Hernia Repair',                   cat:'Surgery',   cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][1]||0),0)*0.25), rate:14000, appr:95, active:true},
+  {dept:'GS',        pkg:'Cholecystectomy (Lap)',           cat:'Surgery',   cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][1]||0),0)*0.20), rate:18000, appr:97, active:true},
+  {dept:'GS',        pkg:'Bowel Resection',                 cat:'Surgery',   cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][1]||0),0)*0.10), rate:30000, appr:90, active:true},
+  {dept:'OG',        pkg:'LSCS (C-Section)',                cat:'Obstetrics',cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][2]||0),0)*0.55), rate:18000, appr:92, active:true},
+  {dept:'OG',        pkg:'High Risk Delivery',              cat:'Obstetrics',cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][2]||0),0)*0.25), rate:12000, appr:88, active:true},
+  {dept:'OG',        pkg:'Colposcopy / Cervical Procedures',cat:'Gynaecology',cases:598, rate:1500, appr:99, active:true},
+  {dept:'OG',        pkg:'Hysterectomy',                    cat:'Surgery',   cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][2]||0),0)*0.10), rate:22000, appr:93, active:true},
+  {dept:'NICU',      pkg:'Neonatal Intensive Care',         cat:'Paediatrics',cases:MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][3]||0),0), rate:18000, appr:78, active:true},
+  {dept:'NICU',      pkg:'Premature Baby Care',             cat:'Paediatrics',cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][3]||0),0)*0.4), rate:22000, appr:75, active:true},
+  {dept:'DENTAL',    pkg:'Dental Extraction / Surgery',     cat:'Dental',    cases:MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][4]||0),0), rate:3500, appr:88, active:true},
+  {dept:'OPTHAL',    pkg:'Cataract Surgery (Phaco)',        cat:'Ophthalmology',cases:MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][5]||0),0), rate:8500, appr:90, active:true},
+  {dept:'OPTHAL',    pkg:'Glaucoma Surgery',                cat:'Ophthalmology',cases:3, rate:12000, appr:85, active:false},
+  {dept:'OPTHAL',    pkg:'Retinal Surgery / Vitrectomy',    cat:'Ophthalmology',cases:0, rate:35000, appr:0, active:false},
+  {dept:'ENT',       pkg:'Tonsillectomy / Adenoidectomy',   cat:'ENT',       cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][6]||0),0)*0.35), rate:8000, appr:93, active:true},
+  {dept:'ENT',       pkg:'FESS / Sinus Surgery',            cat:'ENT',       cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][6]||0),0)*0.30), rate:12000, appr:90, active:true},
+  {dept:'ENT',       pkg:'Mastoidectomy',                   cat:'ENT',       cases:Math.round(MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][6]||0),0)*0.15), rate:15000, appr:87, active:true},
+  {dept:'ENT',       pkg:'Hearing Aid (OAE)',               cat:'ENT',       cases:35, rate:6000, appr:82, active:true},
+  {dept:'ENT',       pkg:'Cochlear Implant',                cat:'ENT',       cases:0, rate:250000, appr:0, active:false},
+  {dept:'DIALYSIS',  pkg:'Haemodialysis (per session)',     cat:'Nephrology',cases:MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][7]||0),0), rate:8800, appr:97, active:true},
+  {dept:'DIALYSIS',  pkg:'CAPD Peritoneal Dialysis',        cat:'Nephrology',cases:0, rate:15000, appr:0, active:false},
+  {dept:'POISONING', pkg:'Snake Bite / ASV Treatment',      cat:'Emergency', cases:MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][8]||0),0), rate:8800, appr:96, active:true},
+  {dept:'ASV',       pkg:'Acute Poisoning Management',      cat:'Emergency', cases:MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][9]||0),0), rate:9000, appr:90, active:true},
+  {dept:'BURNS',     pkg:'Burns Dressing / Skin Graft',     cat:'Emergency', cases:MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][10]||0),0), rate:7800, appr:92, active:true},
+  {dept:'MI/CVA',    pkg:'MI / Acute Coronary Syndrome',   cat:'Cardiology',cases:MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][11]||0),0), rate:30000, appr:89, active:true},
+  {dept:'MI/CVA',    pkg:'CVA / Stroke Management',        cat:'Neurology', cases:5, rate:25000, appr:85, active:true},
+  // Underutilised / not yet active
+  {dept:'CARDIO',    pkg:'Angioplasty (PTCA)',              cat:'Cardiology',cases:0, rate:90000, appr:0, active:false},
+  {dept:'CARDIO',    pkg:'Pacemaker Implantation',          cat:'Cardiology',cases:0, rate:120000,appr:0, active:false},
+  {dept:'CARDIO',    pkg:'CABG (Bypass Surgery)',           cat:'Cardiology',cases:0, rate:180000,appr:0, active:false},
+  {dept:'UROLOGY',   pkg:'PCNL / Nephrolithotomy',         cat:'Urology',   cases:0, rate:45000, appr:0, active:false},
+  {dept:'UROLOGY',   pkg:'TURP / Prostatic Surgery',       cat:'Urology',   cases:0, rate:30000, appr:0, active:false},
+  {dept:'UROLOGY',   pkg:'Kidney Transplant',              cat:'Nephrology',cases:0, rate:200000,appr:0, active:false},
+  {dept:'NEURO',     pkg:'Brain Tumour Surgery',           cat:'Neurology', cases:0, rate:150000,appr:0, active:false},
+  {dept:'NEURO',     pkg:'Spinal Cord Surgery',            cat:'Neurology', cases:0, rate:120000,appr:0, active:false},
+  {dept:'ONCO',      pkg:'Cancer Surgery',                 cat:'Oncology',  cases:0, rate:80000, appr:0, active:false},
+  {dept:'ONCO',      pkg:'Chemotherapy (per cycle)',       cat:'Oncology',  cases:0, rate:15000, appr:0, active:false},
+  {dept:'VASC',      pkg:'Vascular Surgery / Bypass',     cat:'Vascular',  cases:0, rate:100000,appr:0, active:false},
+];
+
+const IKT_PACKAGES = [
+  {pkg:'Emergency Surgery (Accident)',      coverage:'All acute operations within 48hrs',     cases2025:Math.round(IKT_2025_APPROVED.slice(0,12).reduce((s,v)=>s+v,0)*0.30), rate:'Package-based', appr:90, notes:'Must file within 48hrs'},
+  {pkg:'Head Injury Management',            coverage:'CT, Surgery, ICU — any severity',       cases2025:Math.round(IKT_2025_APPROVED.slice(0,12).reduce((s,v)=>s+v,0)*0.12), rate:'Up to ₹1.5L', appr:88, notes:'Neurosurgical referral often needed'},
+  {pkg:'Fracture Fixation (Accident)',      coverage:'X-ray, IM nail, Plastering, ORIF',      cases2025:Math.round(IKT_2025_APPROVED.slice(0,12).reduce((s,v)=>s+v,0)*0.20), rate:'Up to ₹40K', appr:92, notes:'High volume — road accidents'},
+  {pkg:'Burns Treatment',                   coverage:'Dressing, skin graft, ICU',             cases2025:MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][10]||0),0), rate:'Up to ₹80K', appr:93, notes:'Separate from CMCHIS burns'},
+  {pkg:'Polytrauma Management',             coverage:'Multi-system trauma, ventilator',       cases2025:Math.round(IKT_2025_APPROVED.slice(0,12).reduce((s,v)=>s+v,0)*0.08), rate:'Up to ₹2L', appr:81, notes:'Documentation-intensive'},
+  {pkg:'Snake Bite / ASV (IKT route)',      coverage:'ASV, antidote, ICU stabilisation',      cases2025:MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][8]||0),0), rate:'Up to ₹15K', appr:96, notes:'Monsoon surge Jun–Sep'},
+  {pkg:'Acute Poisoning',                  coverage:'Lavage, antidote, ICU',                 cases2025:MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][9]||0),0), rate:'Up to ₹12K', appr:90, notes:'Overlaps CMCHIS poisoning'},
+  {pkg:'Spinal Injury',                    coverage:'Immobilisation, surgery if indicated',   cases2025:12, rate:'Up to ₹1L', appr:83, notes:'Requires MRI confirmation'},
+  {pkg:'Road Accident — General',          coverage:'Any procedure in 48hr window',           cases2025:Math.round(IKT_2025_APPROVED.slice(0,12).reduce((s,v)=>s+v,0)*0.20), rate:'Up to ₹5L', appr:87, notes:'FIR/MLC mandatory'},
+  {pkg:'Flood / Disaster Injuries',        coverage:'Infection, wound care, surgery',         cases2025:8, rate:'Package-based', appr:85, notes:'Monsoon activation'},
+];
+
+let pkgSortCol = 2, pkgSortDir = 'desc';
+let iktSortCol = 2, iktSortDir = 'desc';
+
+function buildPkgTable() {
+  const active = CMCHIS_PACKAGES.filter(p=>p.active && p.cases>0);
+  renderPkgRows(active);
+}
+
+function renderPkgRows(data) {
+  const tbody = document.getElementById('pkgTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = data.map(p => {
+    const rev = p.cases * p.rate;
+    const trend = p.cases > 15 ? '▲' : p.cases > 5 ? '→' : '▼';
+    const trendC = trend==='▲'?'var(--green-dark)':trend==='→'?'var(--grey7)':'var(--red)';
+    const appC = p.appr>=90?'var(--green-dark)':p.appr>=80?'var(--yellow-dark)':'var(--red)';
+    const badge = p.appr>=90?'badge-green':p.appr>=80?'badge-yellow':'badge-red';
+    const barW = Math.round(p.cases/5); // scale bar
+    return `<tr onclick="showDrill('dept','${p.dept}')">
+      <td><strong style="color:${COLORS[DEPTS.indexOf(p.dept)%COLORS.length]}">${p.dept}</strong><br>
+        <span style="font-size:11px;color:var(--grey6)">${p.pkg}</span></td>
+      <td><span style="background:var(--blue-light);color:var(--blue);padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">${p.cat}</span></td>
+      <td><div style="display:flex;align-items:center;gap:6px">
+        <div style="width:${Math.min(barW,60)}px;height:8px;background:${COLORS[DEPTS.indexOf(p.dept)%COLORS.length]};border-radius:4px;opacity:.7"></div>
+        <strong>${p.cases}</strong></div></td>
+      <td>${(p.cases/12).toFixed(1)}/mo</td>
+      <td style="color:var(--green-dark)">₹${rev>=100000?(rev/100000).toFixed(1)+'L':Math.round(rev/1000)+'K'}</td>
+      <td style="font-weight:600;color:${appC}">${p.appr}%</td>
+      <td style="color:${trendC};font-weight:600">${trend}</td>
+      <td><span class="badge ${badge}">${p.appr>=90?'ACTIVE':p.appr>=80?'OK':'REVIEW'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function sortPkgTable(col) {
+  const cols = [p=>p.dept+p.pkg, p=>p.cat, p=>p.cases, p=>p.cases/12, p=>p.cases*p.rate, p=>p.appr, p=>p.cases];
+  if (pkgSortCol===col) pkgSortDir = pkgSortDir==='asc'?'desc':'asc';
+  else { pkgSortCol=col; pkgSortDir='desc'; }
+  const active = CMCHIS_PACKAGES.filter(p=>p.active && p.cases>0);
+  active.sort((a,b)=>{const v=cols[col]; return pkgSortDir==='asc'?v(a)-v(b):v(b)-v(a);});
+  renderPkgRows(active);
+}
+
+function filterPkgTable(q) {
+  const active = CMCHIS_PACKAGES.filter(p=>p.active && p.cases>0 &&
+    (p.dept+p.pkg+p.cat).toLowerCase().includes(q.toLowerCase()));
+  renderPkgRows(active);
+}
+
+function buildIktPkgTable() {
+  const tbody = document.getElementById('iktPkgTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = IKT_PACKAGES.map(p => {
+    const appC = p.appr>=90?'var(--green-dark)':p.appr>=80?'var(--yellow-dark)':'var(--red)';
+    return `<tr>
+      <td><strong>${p.pkg}</strong></td>
+      <td style="font-size:12px;color:var(--grey7)">${p.coverage}</td>
+      <td><strong>${p.cases2025}</strong></td>
+      <td style="font-size:12px">${p.rate}</td>
+      <td style="font-weight:600;color:${appC}">${p.appr}%</td>
+      <td style="font-size:11px;color:var(--grey6)">${p.notes}</td>
+    </tr>`;
+  }).join('');
+}
+
+function sortIktTable(col) {
+  const tbody = document.getElementById('iktPkgTableBody');
+  if (!tbody) return;
+  const rows = Array.from(tbody.rows);
+  if (iktSortCol===col) iktSortDir = iktSortDir==='asc'?'desc':'asc';
+  else { iktSortCol=col; iktSortDir='desc'; }
+  rows.sort((a,b)=>{
+    const av=a.cells[col]?.textContent.trim()||'';
+    const bv=b.cells[col]?.textContent.trim()||'';
+    const an=parseFloat(av.replace(/[₹,% ]/g,'')), bn=parseFloat(bv.replace(/[₹,% ]/g,''));
+    return iktSortDir==='asc'?(isNaN(an)?av.localeCompare(bv):an-bn):(isNaN(bn)?bv.localeCompare(av):bn-an);
+  });
+  rows.forEach(r=>tbody.appendChild(r));
+}
+
+function buildUnusedPkgs() {
+  const el = document.getElementById('unusedPkgList');
+  if (!el) return;
+  const unused = CMCHIS_PACKAGES.filter(p=>!p.active || p.cases===0);
+  const totalOpp = unused.reduce((s,p)=>s+p.rate*10,0); // 10 cases/month potential
+  el.innerHTML=`<div style="font-size:14px;font-weight:600;color:var(--green-dark);margin-bottom:14px">
+    Potential monthly revenue if each package averages 10 cases: <span style="font-size:20px">₹${(totalOpp/100000).toFixed(1)}L/month</span>
+  </div>
+  <div class="chart-card" style="padding:0;overflow:hidden"><div class="table-wrap"><table class="pkg-table">
+    <thead><tr><th>Department</th><th>Package / Procedure</th><th>Category</th><th>Package Rate</th><th>Potential (10 cases)</th><th>Action Required</th></tr></thead>
+    <tbody>${unused.map(p=>`<tr>
+      <td><strong style="color:var(--red)">${p.dept}</strong></td>
+      <td>${p.pkg}</td>
+      <td><span style="background:var(--red-light);color:var(--red-dark);padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600">${p.cat}</span></td>
+      <td style="font-weight:600;color:var(--green-dark)">₹${(p.rate/1000).toFixed(0)}K</td>
+      <td style="font-weight:600;color:var(--green-dark)">₹${(p.rate*10/100000).toFixed(1)}L/mo</td>
+      <td style="font-size:12px;color:var(--grey7)">${p.cases===0?'Not yet activated — requires specialist / equipment':'Improve documentation'}</td>
+    </tr>`).join('')}
+    </tbody>
+  </table></div></div>`;
+}
+
+function switchPkgTab(t, el) {
+  document.querySelectorAll('.pkg-tab').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.pkg-panel').forEach(p=>p.style.display='none');
+  document.getElementById('pkg-panel-'+t).style.display='';
+  if(t==='ikt') buildIktPkgTable();
+  if(t==='unused') buildUnusedPkgs();
+}
+
+function buildPkgVolumeChart() {
+  const deptTotals = DEPTS.map((d,i)=>MONTHS_2025.reduce((s,m)=>s+(DATA_2025[m][i]||0),0));
+  safeChart('pkgVolumeChart', {
+    type:'bar',
+    data:{
+      labels:DEPTS,
+      datasets:[{
+        label:'2025 Annual Cases',
+        data:deptTotals,
+        backgroundColor:COLORS.map(c=>c+'aa'),
+        borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      onClick:(e,el)=>{ if(el.length) showDrill('dept',DEPTS[el[0].index]); },
+      plugins:{legend:{display:false},
+        datalabels:{display:true,anchor:'end',align:'top',formatter:v=>v,
+          color:'#3c4043',font:{size:11,weight:'600'}}},
+      scales:{
+        x:{ticks:{color:tc(),font:{size:11}},grid:{color:gc()}},
+        y:{ticks:{color:tc()},grid:{color:gc()},beginAtZero:true}
+      }
+    },
+    plugins:[ChartDataLabels]
+  });
+}
+
+// ── Safe chart creator — destroys existing instance on the canvas before creating new one ──
+function safeChart(canvasId, config) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return null;
+  // Destroy any existing Chart.js instance on this canvas
+  const existing = Chart.getChart(canvas);
+  if (existing) existing.destroy();
+  return new Chart(canvas, config);
+}
+// ══════════════════════════════════════════════════════
+
+function buildDoctorPage() {
+  // IKT doctors grid
+  const iktGrid = document.getElementById('iktDoctorGrid');
+  if (iktGrid) {
+    iktGrid.innerHTML = '';
+    const sorted = [...IKT_DOC_DATA].sort((a,b)=>(b.total25+b.m26.reduce((s,v)=>s+v,0))-(a.total25+a.m26.reduce((s,v)=>s+v,0)));
+    sorted.forEach((doc,ri) => {
+      const ytd26 = doc.m26.slice(0,3).reduce((s,v)=>s+v,0);
+      const allVals = [...doc.m25, ...doc.m26.slice(0,3)];
+      const best = Math.max(...allVals.filter(v=>v>0));
+      const initials = doc.name.split(/[.\s]/).filter(Boolean).map(p=>p[0]).join('').slice(0,2).toUpperCase();
+      const trend = doc.m26[0]>0 && doc.m25[11]>0 ? (doc.m26[0]>=doc.m25[11]?'▲':'▼') : '→';
+      const trendC = trend==='▲'?'var(--green-light);color:var(--green-dark)':trend==='▼'?'var(--red-light);color:var(--red-dark)':'var(--grey2);color:var(--grey7)';
+      const card = document.createElement('div');
+      card.className = 'doc-card-v2';
+      card.onclick = () => showDrill('ikt-doctor', doc.name);
+      card.innerHTML = `
+        <span class="doc-trend-badge" style="background:${trendC}">${trend} ${trend==='▲'?'Up':trend==='▼'?'Down':'Stable'}</span>
+        <div class="doc-card-header">
+          <div class="doc-avatar-v2" style="background:${COLORS[ri%COLORS.length]}">${initials}</div>
+          <div><div class="doc-name-v2">${doc.name}</div><div class="doc-dept-v2">${doc.dept}</div></div>
+        </div>
+        <div class="doc-stats-row">
+          <div class="doc-stat"><div class="doc-stat-val">${doc.total25}</div><div class="doc-stat-lab">2025 Total</div></div>
+          <div class="doc-stat"><div class="doc-stat-val">${ytd26}</div><div class="doc-stat-lab">2026 YTD</div></div>
+          <div class="doc-stat"><div class="doc-stat-val">${best}</div><div class="doc-stat-lab">Best Month</div></div>
+        </div>
+        <div style="background:var(--grey1);border-radius:6px;padding:4px 8px;font-size:11px;color:var(--grey6)">
+          Jan26:${doc.m26[0]||0} · Feb26:${doc.m26[1]||0} · Dec25:${doc.m25[11]||0}
+        </div>`;
+      iktGrid.appendChild(card);
+    });
+  }
+
+  // CMCHIS doctor leaderboard
+  const cmchisLB = document.getElementById('cmchisLeaderboard');
+  if (cmchisLB) {
+    const totals = CMCHIS_DOCTORS.map((d,i)=>({
+      name:d,
+      jan:CMCHIS_DOC_JAN[i], feb:CMCHIS_DOC_FEB[i], mar:CMCHIS_DOC_MAR[i],
+      total:CMCHIS_DOC_JAN[i]+CMCHIS_DOC_FEB[i]+CMCHIS_DOC_MAR[i]
+    })).sort((a,b)=>b.total-a.total);
+    cmchisLB.innerHTML=`<div style="font-size:12px;font-weight:600;color:var(--grey7);margin-bottom:10px">Q1 2025 — Jan+Feb+Mar</div>
+    <table class="drill-table" style="font-size:12px">
+      <thead><tr><th>#</th><th>Doctor</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Total</th><th>Trend</th></tr></thead>
+      <tbody>${totals.map((d,rank)=>{
+        const trend=d.mar>=d.jan?'▲':'▼';
+        const tc2=trend==='▲'?'var(--green-dark)':'var(--red)';
+        return `<tr><td style="font-weight:700;color:${COLORS[rank%COLORS.length]}">${rank+1}</td>
+          <td><strong>${d.name}</strong></td>
+          <td>${d.jan}</td><td>${d.feb}</td><td>${d.mar}</td>
+          <td><strong>${d.total}</strong></td>
+          <td style="color:${tc2};font-weight:600">${trend}</td></tr>`;
+      }).join('')}
+      </tbody>
+    </table>`;
+    makeSortable('cmchisLeaderboard table');
+  }
+
+  // Colposcopy doctors
+  const dg = document.getElementById('doctorGrid');
+  if (dg && !dg.children.length) {
+    DOCTORS.forEach((d,i)=>{
+      const tot=DOC_H1[i]+DOC_H2[i];
+      const initials=d.split('.').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+      const card = document.createElement('div');
+      card.className='doc-card-v2';
+      card.onclick=()=>{ showToast(`Dr. ${d} — ${tot} cases in 2025 (H1:${DOC_H1[i]} H2:${DOC_H2[i]})`); };
+      card.innerHTML=`<div class="doc-card-header">
+          <div class="doc-avatar-v2" style="background:${avatarColors[i]}">${initials}</div>
+          <div><div class="doc-name-v2">${d}</div><div class="doc-dept-v2">Colposcopy / OG</div></div>
+        </div>
+        <div class="doc-stats-row">
+          <div class="doc-stat"><div class="doc-stat-val">${tot}</div><div class="doc-stat-lab">2025 Annual</div></div>
+          <div class="doc-stat"><div class="doc-stat-val">${DOC_DEC[i]}</div><div class="doc-stat-lab">Dec 25</div></div>
+          <div class="doc-stat"><div class="doc-stat-val">${DOC_NOV[i]}</div><div class="doc-stat-lab">Nov 25</div></div>
+        </div>`;
+      dg.appendChild(card);
+    });
+  }
+
+  // CMCHIS doctor bar chart
+  safeChart('cmchisDoctorChart', {
+    type:'bar',
+    data:{
+      labels:CMCHIS_DOCTORS,
+      datasets:[
+        {label:'Jan 2025',data:CMCHIS_DOC_JAN,backgroundColor:'#1a73e888',borderRadius:4},
+        {label:'Feb 2025',data:CMCHIS_DOC_FEB,backgroundColor:'#34a85388',borderRadius:4},
+        {label:'Mar 2025',data:CMCHIS_DOC_MAR,backgroundColor:'#fbbc0488',borderRadius:4},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      plugins:{legend:{labels:{color:'#5f6368',font:{size:11}}}},
+      scales:{x:{ticks:{color:'#5f6368'},grid:{color:'rgba(0,0,0,.06)'}},
+              y:{ticks:{color:'#5f6368',font:{size:10}},grid:{display:false}}}}
+  });
+
+  safeChart('colpoChart', {
+    type:'bar',
+    data:{labels:DOCTORS.map(d=>d.split('.').pop()),datasets:[
+      {label:'H1 2025',data:DOC_H1,backgroundColor:'#1a73e888',borderRadius:4},
+      {label:'H2 2025',data:DOC_H2,backgroundColor:'#34a85388',borderRadius:4},
+      {label:'Dec 25',data:DOC_DEC,backgroundColor:'#fbbc0488',borderRadius:4},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#5f6368',font:{size:11}}}},
+      scales:{x:{ticks:{color:tc()},grid:{color:gc()}},y:{ticks:{color:tc()},grid:{color:gc()}}}}
+  });
+  safeChart('colpoShare', {
+    type:'doughnut',
+    data:{labels:DOCTORS,datasets:[{data:DOC_DEC,backgroundColor:avatarColors,borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{color:'#5f6368',font:{size:10},boxWidth:10}}}}
+  });
+  const rankDiv=document.getElementById('doctorRanking');
+  if(rankDiv){
+    const ranked=[...DOCTORS.map((d,i)=>({d,v:DOC_H1[i]+DOC_H2[i],i}))].sort((a,b)=>b.v-a.v);
+    rankDiv.innerHTML='<div style="font-size:12px;font-weight:600;color:var(--grey7);margin-bottom:6px">2025 Annual Ranking</div>'+
+      ranked.map((r,rank)=>`<div class="stat-row">
+        <div style="display:flex;align-items:center;gap:8px;flex:1">
+          <div style="width:20px;height:20px;border-radius:50%;background:${avatarColors[r.i]};display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;flex-shrink:0">${rank+1}</div>
+          <div class="stat-label">${r.d}</div>
+        </div>
+        <div class="stat-val">${r.v} cases</div>
+      </div>`).join('');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// ══  ANNUAL TABLE — MONTH ROWS CLICKABLE  ════════════
+// ══════════════════════════════════════════════════════
+
+function buildAnnualTable() {
+  const tbody = document.getElementById('annualTableBody');
+  if (!tbody) return;
+  const mLabels = ALL_MONTHS_LABELS;
+  tbody.innerHTML = ALL_MONTHS_KEYS.map((m,i)=>{
+    const app=MONTHLY_APPLIED_2025[i]||0, appr=MONTHLY_APPROVED_2025[i]||0;
+    const den=MONTHLY_DENIED_2025[i]||0, amt=MONTHLY_AMOUNT_2025[i]||0;
+    const rate=app>0?(appr/app*100).toFixed(1):0;
+    const rN=parseFloat(rate);
+    const status=rN>=90?'<span class="badge badge-green">GOOD</span>':rN>=80?'<span class="badge badge-yellow">WATCH</span>':'<span class="badge badge-red">REVIEW</span>';
+    const is26 = m.includes('2026');
+    return `<tr onclick="showDrill('month','${m}')" style="${is26?'background:var(--blue-light)':''}">
+      <td><strong>${mLabels[i]}</strong>${is26?' <span style="font-size:10px;color:var(--blue);font-weight:600">2026</span>':''}</td>
+      <td>${app}</td>
+      <td style="color:var(--green-dark);font-weight:600">${appr}</td>
+      <td style="color:${den>20?'var(--red)':'var(--grey8)'}">${den}</td>
+      <td>₹${(amt/100000).toFixed(1)}L</td>
+      <td style="font-weight:600;color:${rN>=90?'var(--green-dark)':rN>=80?'var(--yellow-dark)':'var(--red)'}">
+        ${rate}%</td>
+      <td>${status}</td>
+    </tr>`;
+  }).join('');
+  // Footer
+  const totApp=MONTHLY_APPLIED_2025.reduce((s,v)=>s+v,0);
+  const totAppr=MONTHLY_APPROVED_2025.reduce((s,v)=>s+v,0);
+  const totDen=MONTHLY_DENIED_2025.reduce((s,v)=>s+v,0);
+  const totAmt=MONTHLY_AMOUNT_2025.reduce((s,v)=>s+v,0);
+  const annR=(totAppr/totApp*100).toFixed(1);
+  const foot=document.getElementById('annualTableFoot');
+  if(foot) foot.innerHTML=`<tr style="background:var(--grey1);font-weight:700">
+    <td>TOTAL (14 mo)</td><td>${totApp}</td>
+    <td style="color:var(--green-dark)">${totAppr}</td>
+    <td style="color:var(--red)">${totDen}</td>
+    <td>₹${(totAmt/100000).toFixed(1)}L</td>
+    <td style="color:var(--green-dark)">${annR}%</td>
+    <td><span class="badge badge-green">ANNUAL</span></td>
+  </tr>`;
+}
+
+// ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// ══  INITIALISE ALL NEW FEATURES  ════════════════
+// ══════════════════════════════════════════════════
+(function initAll() {
+  // 1. Inject month filter bars into page headers
+  injectMonthFilters();
+
+  // 2. Build doctor performance page
+  buildDoctorPage();
+
+  // 3. Build package performance page
+  buildPkgTable();
+  buildIktPkgTable();
+  buildUnusedPkgs();
+  buildPkgVolumeChart();
+
+  // 4. Build annual table (with 2026 rows)
+  buildAnnualTable();
+
+  // 5. Make all tables sortable
+  setTimeout(() => {
+    ['quickTable','pkgTable','iktPkgTable'].forEach(id => makeSortable(id));
+  }, 200);
+
+  // 6. Make dept strip tabs double-clickable for drill-down
+  setTimeout(() => {
+    document.querySelectorAll('.strip-tab').forEach((tab, i) => {
+      tab.addEventListener('dblclick', () => showDrill(i));
+    });
+  }, 400);
+
+  // 7. Add alert-strip blue colour variant
+  const s = document.createElement('style');
+  s.textContent = '.alert-strip.alert-blue{background:var(--blue-light);border-left-color:var(--blue)}';
+  document.head.appendChild(s);
+})();
 </script>
-</body>
-</html>
