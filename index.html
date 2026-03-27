@@ -554,6 +554,9 @@ tr:hover td{background:var(--grey1)}
 
   /* Period badge — hide */
   .period-badge{display:none}
+  /* GSheet sync badge — hide on mobile */
+  #gsyncBadge{display:none!important}
+  #gsyncBtn span{display:none}
 
   /* Action buttons in header — icon-only, visible */
   #header .btn-outline{
@@ -1172,6 +1175,12 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
     <input type="text" placeholder="Search departments, schemes…" id="globalSearch" oninput="handleSearch(this.value)">
   </div>
   <div class="period-badge">2025 Full Year</div>
+  <!-- Google Sheet Sync -->
+  <button id="gsyncBtn" class="btn btn-outline" onclick="syncFromGSheet(false)" title="Sync data from Google Sheet" style="gap:6px;border-color:#34a853;color:#137333">
+    <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+    Sync Sheet
+  </button>
+  <span id="gsyncBadge" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;border:1px solid;background:#f1f3f4;color:#5f6368;border-color:#dadce0">⏳ Not synced</span>
   <button class="btn btn-outline" onclick="exportCSV()">
     <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
     Export
@@ -2844,6 +2853,162 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
 </main>
 
 <script>
+// ══════════════════ GOOGLE SHEET AUTO-SYNC ══════════════════
+const GSHEET_URL = 'https://script.google.com/macros/s/AKfycbwfscRBnE73tDwPbeBrvKN7ZmwbX_sdZkWVXkD1fmVSs_9aKcdWhj9tmffQEv7rPoReUQ/exec';
+
+// ── Sync state ──
+let _lastSyncTime = null;
+let _syncInProgress = false;
+
+function _updateSyncBadge(state, msg) {
+  const badge = document.getElementById('gsyncBadge');
+  if (!badge) return;
+  const styles = {
+    syncing: 'background:#e8f0fe;color:#1a73e8;border-color:#1a73e8',
+    ok:      'background:#e6f4ea;color:#137333;border-color:#34a853',
+    error:   'background:#fce8e6;color:#c5221f;border-color:#ea4335',
+    idle:    'background:#f1f3f4;color:#5f6368;border-color:#dadce0'
+  };
+  badge.style.cssText = `display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:500;border:1px solid;transition:all .3s;${styles[state]||styles.idle}`;
+  badge.innerHTML = msg;
+}
+
+function showToast(msg, dur) {
+  // reuse existing toast if present, else create one
+  let t = document.getElementById('gsheetToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'gsheetToast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3c4043;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:opacity .3s;pointer-events:none';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, dur || 3000);
+}
+
+async function syncFromGSheet(silent) {
+  if (_syncInProgress) return;
+  _syncInProgress = true;
+  const btn = document.getElementById('gsyncBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;animation:spin .8s linear infinite"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> Syncing…'; }
+  _updateSyncBadge('syncing', '↻ Syncing…');
+
+  try {
+    // Fetch from Google Apps Script — add timestamp param to bust cache
+    const res = await fetch(GSHEET_URL + '?t=' + Date.now(), {
+      method: 'GET',
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+
+    // Try parsing as JSON first, then as CSV
+    let parsed;
+    const trimmed = text.trim();
+    if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+      const json = JSON.parse(trimmed.startsWith('{') ? trimmed : trimmed); // handle wrapper
+      const arr = Array.isArray(json) ? json : (json.data || json.rows || Object.values(json));
+      if (!Array.isArray(arr) || arr.length === 0) throw new Error('Empty or unrecognised JSON from sheet');
+      // Normalise each row using the existing parseJSON logic
+      const rows = arr.map((obj, idx) => {
+        const dept   = String(obj.Department || obj.department || obj.DEPARTMENT || obj.dept || '').toUpperCase().trim();
+        const rawMon = String(obj.Month || obj.month || obj.MONTH || '');
+        const month  = parseMonthLabel(rawMon);
+        if (!dept || !month) return null;
+        return {
+          department: dept,
+          month,
+          applied:  parseInt(obj.Applied  || obj.applied  || 0) || 0,
+          approved: parseInt(obj.Approved || obj.approved || 0) || 0,
+          denied:   parseInt(obj.Denied   || obj.denied   || 0) || 0,
+          amount:   parseFloat(String(obj.Amount || obj.amount || 0).replace(/,/g, '')) || 0,
+        };
+      }).filter(Boolean);
+      if (rows.length === 0) throw new Error('No valid rows parsed from sheet response');
+      parsed = { rows };
+    } else {
+      // Try CSV
+      parsed = parseCSV(trimmed);
+    }
+
+    if (parsed.error) throw new Error(parsed.error);
+
+    // Apply directly — same as clicking "Apply Import" in the modal
+    const rows      = parsed.rows;
+    const newMonths = [...new Set(rows.map(r => r.month))];
+    const newDepts  = [...new Set(rows.map(r => r.department))].filter(d => !DEPTS.includes(d));
+
+    newDepts.forEach(d => {
+      DEPTS.push(d);
+      DATA_STORE[d]   = DATA_MONTHS.map(() => 0);
+      DETAIL_STORE[d] = DATA_MONTHS.map(m => ({ month: m, applied: 0, approved: 0, denied: 0, amount: 0 }));
+      COLORS.push('#' + (Math.random() * 0xffffff << 0).toString(16).padStart(6, '0'));
+      PALE.push('#f5f5f5');
+    });
+
+    newMonths.forEach(m => {
+      if (!DATA_MONTHS.includes(m)) {
+        DATA_MONTHS.push(m);
+        DEPTS.forEach(d => {
+          if (!DATA_STORE[d])   DATA_STORE[d]   = [];
+          if (!DETAIL_STORE[d]) DETAIL_STORE[d] = [];
+          DATA_STORE[d].push(0);
+          DETAIL_STORE[d].push({ month: m, applied: 0, approved: 0, denied: 0, amount: 0 });
+        });
+      }
+    });
+
+    rows.forEach(r => {
+      const mi = DATA_MONTHS.indexOf(r.month);
+      if (mi < 0) return;
+      if (!DATA_STORE[r.department])   DATA_STORE[r.department]   = DATA_MONTHS.map(() => 0);
+      if (!DETAIL_STORE[r.department]) DETAIL_STORE[r.department] = DATA_MONTHS.map(m => ({ month: m, applied: 0, approved: 0, denied: 0, amount: 0 }));
+      DATA_STORE[r.department][mi]   = r.approved;
+      DETAIL_STORE[r.department][mi] = { month: r.month, applied: r.applied, approved: r.approved, denied: r.denied, amount: r.amount };
+    });
+
+    // Rebuild charts and KPIs
+    if (typeof refreshAllCharts === 'function')  refreshAllCharts();
+    if (typeof refreshOverviewKPIs === 'function') refreshOverviewKPIs();
+    if (typeof buildDoctorPage === 'function')   buildDoctorPage();
+
+    // Persist to Firebase/localStorage
+    if (window._fb) {
+      const meta = { months: newMonths.join(', '), depts: [...new Set(rows.map(r => r.department))].join(', ') };
+      window._fb.saveImport(rows, meta);
+      window._fb.saveSnapshot(DATA_STORE, DATA_MONTHS);
+    }
+
+    _lastSyncTime = new Date();
+    const timeStr = _lastSyncTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    _updateSyncBadge('ok', `✓ Synced ${timeStr} · ${rows.length} rows`);
+    if (!silent) showToast(`✅ Google Sheet synced — ${rows.length} rows loaded`, 4000);
+
+  } catch (err) {
+    _updateSyncBadge('error', '⚠ Sync failed');
+    if (!silent) showToast('❌ Sheet sync failed: ' + err.message, 5000);
+    console.warn('[GSheet Sync]', err);
+  } finally {
+    _syncInProgress = false;
+    const btn2 = document.getElementById('gsyncBtn');
+    if (btn2) { btn2.disabled = false; btn2.innerHTML = '<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> Sync Sheet'; }
+  }
+}
+
+// Auto-sync on page load (after charts are initialised)
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(() => syncFromGSheet(true), 1500);
+});
+
+// CSS for spin animation (injected once)
+(function() {
+  const s = document.createElement('style');
+  s.textContent = '@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
+  document.head.appendChild(s);
+})();
+
 // ══════════════════ DATA (Real 2025 Full-Year Data from XLS) ══════════════════
 // Departments as per 2025_CMCHISREPORT.xls
 const DEPTS = ['ORTHO','GS','OG','NICU','DENTAL','OPTHAL','ENT','DIALYSIS','POISONING','ASV','BURNS','MI/CVA'];
