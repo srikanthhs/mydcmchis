@@ -2854,7 +2854,7 @@ DIALYSIS,Mar-26,70,68,2,612000"></textarea>
 
 <script>
 // ══════════════════ GOOGLE SHEET AUTO-SYNC ══════════════════
-const GSHEET_URL = 'https://script.google.com/macros/s/AKfycbwfscRBnE73tDwPbeBrvKN7ZmwbX_sdZkWVXkD1fmVSs_9aKcdWhj9tmffQEv7rPoReUQ/exec';
+const GSHEET_URL = '/api/sheet';
 
 // ── Sync state ──
 let _lastSyncTime = null;
@@ -2897,7 +2897,7 @@ async function syncFromGSheet(silent) {
 
   try {
     // Fetch from Google Apps Script — add timestamp param to bust cache
-    const res = await fetch(GSHEET_URL + '?t=' + Date.now(), {
+    const res = await fetch(GSHEET_URL, {
       method: 'GET',
       cache: 'no-store',
     });
@@ -7031,18 +7031,14 @@ function buildDoctorRevenueSection() {
 
 
 // ══════════════════════════════════════════════════════
-// ══  GOOGLE SHEETS DAILY DATA SYNC  ══════════════════
-// Fetches the published Google Sheet CSV once per day,
-// caches in localStorage, and applies before rendering.
-// Falls back to hardcoded data if fetch fails/times-out.
+// ══  GOOGLE SHEETS DAILY SYNC (JSONP — CORS-free)  ══
 // ══════════════════════════════════════════════════════
 (function setupSheetSync() {
-  // ── Google Apps Script Web App — CORS-free, no proxy needed ──
-  const APPS_URL  = 'https://script.google.com/macros/s/AKfycbwNFa3mQC7i6yuI4FVXTIEBnzqimslLjR9C4fwp2qwO3vU5F5XLRMPiuSwLL_xDNOv39g/exec';
-  const CACHE_KEY = 'cmchis_gsheet_v4';
-  const todayKey   = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-  const TIMEOUT_MS = 6000;
-  let   _initFired = false;
+  var APPS_URL  = '/api/sheet';
+  var CACHE_KEY = 'cmchis_gsheet_v9';
+  var todayKey  = new Date().toISOString().slice(0, 10);
+  var TIMEOUT_MS = 8000;
+  var _initFired = false;
 
   function safeInitAll() {
     if (_initFired) return;
@@ -7050,145 +7046,111 @@ function buildDoctorRevenueSection() {
     initAll();
   }
 
-  // ── Detect "Jan 2025" / "Feb-26" / "March 2026" in a cell ──
   function findMonthKey(raw) {
     var s = String(raw == null ? '' : raw).trim();
     if (!s) return null;
     var m = s.match(/^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*[\s\-_]*(20)?(\d\d)/i);
     if (!m) return null;
-    var mo = m[1].charAt(0).toUpperCase() + m[1].slice(1, 3).toLowerCase();
-    return mo + ' 20' + m[3]; // e.g. "Jan 2025"
+    return m[1].charAt(0).toUpperCase() + m[1].slice(1,3).toLowerCase() + ' 20' + m[3];
   }
 
   function parseNum(s) {
-    var n = parseFloat(String(s == null ? '' : s).replace(/[₹,\s]/g, ''));
+    var n = parseFloat(String(s == null ? '' : s).replace(/[^\d.\-]/g, ''));
     return isNaN(n) ? 0 : Math.round(n);
   }
 
-  // ── Apps Script returns a 2-D array (array of row-arrays) ──
   function processRows(rows) {
     if (!rows || rows.length < 2) return null;
-
-    var DEPT_LOWER = DEPTS.map(function(d) { return d.toLowerCase().replace(/[^a-z]/g, ''); });
-
-    // Find header row — contains a dept name, "month", or "applied"
+    var DEPT_LOWER = DEPTS.map(function(d){ return d.toLowerCase().replace(/[^a-z]/g,''); });
     var headerIdx = 0;
-    for (var r = 0; r < Math.min(6, rows.length); r++) {
-      var lower = rows[r].map(function(c) { return String(c).toLowerCase().replace(/[^a-z]/g, ''); });
-      if (lower.some(function(c) { return DEPT_LOWER.indexOf(c) >= 0 || c === 'month' || c === 'applied'; })) {
-        headerIdx = r; break;
-      }
+    for (var r = 0; r < Math.min(8, rows.length); r++) {
+      var lower = rows[r].map(function(c){ return String(c).toLowerCase().replace(/[^a-z]/g,''); });
+      if (lower.some(function(c){ return DEPT_LOWER.indexOf(c)>=0 || c==='month' || c==='applied'; })) { headerIdx=r; break; }
     }
-    var headers = rows[headerIdx].map(function(c) { return String(c).toLowerCase().replace(/[^a-z\/]/g, ''); });
-
-    // Map column positions
-    var colMap = { depts: {} };
-    headers.forEach(function(h, i) {
-      DEPT_LOWER.forEach(function(d, di) { if (h === d) colMap.depts[di] = i; });
-      if (h === 'applied')                                              colMap.applied  = i;
-      if (h === 'approved')                                             colMap.approved = i;
-      if (h.indexOf('denied') >= 0 || h === 'denial')                  colMap.denied   = i;
-      if (h.indexOf('amount') >= 0 || h.indexOf('revenue') >= 0)       colMap.amount   = i;
+    var headers = rows[headerIdx].map(function(c){ return String(c).toLowerCase().replace(/[^a-z\/]/g,''); });
+    var colMap = { depts:{} };
+    headers.forEach(function(h,i){
+      DEPT_LOWER.forEach(function(d,di){ if(h===d) colMap.depts[di]=i; });
+      if(h==='applied')                                        colMap.applied=i;
+      if(h==='approved')                                       colMap.approved=i;
+      if(h.indexOf('denied')>=0||h==='denial')                colMap.denied=i;
+      if(h.indexOf('amount')>=0||h.indexOf('revenue')>=0)     colMap.amount=i;
     });
-
-    var out = { deptData: {}, applied: [], approved: [], denied: [], amount: [], deptTotal: [], labels: [], monthKeys: [] };
-
-    for (var ri = headerIdx + 1; ri < rows.length; ri++) {
-      var row = rows[ri];
-      var mk  = findMonthKey(row[0]);
-      if (!mk) continue;
-
-      var deptArr = DEPTS.map(function(_, di) {
-        var ci = colMap.depts[di];
-        return ci !== undefined ? parseNum(row[ci]) : 0;
-      });
-
-      out.deptData[mk] = deptArr;
-      out.monthKeys.push(mk);
-      out.labels.push(mk.slice(0, 3) + ' ' + mk.slice(-2));
-      out.applied.push( colMap.applied  !== undefined ? parseNum(row[colMap.applied])  : 0);
-      out.approved.push(colMap.approved !== undefined ? parseNum(row[colMap.approved]) : 0);
-      out.denied.push(  colMap.denied   !== undefined ? parseNum(row[colMap.denied])   : 0);
-      out.amount.push(  colMap.amount   !== undefined ? parseNum(row[colMap.amount])   : 0);
-      out.deptTotal.push(deptArr.reduce(function(s, v) { return s + v; }, 0));
+    var out={deptData:{},applied:[],approved:[],denied:[],amount:[],deptTotal:[],labels:[],monthKeys:[]};
+    for(var ri=headerIdx+1;ri<rows.length;ri++){
+      var row=rows[ri], mk=findMonthKey(row[0]);
+      if(!mk) continue;
+      var deptArr=DEPTS.map(function(_,di){ var ci=colMap.depts[di]; return ci!==undefined?parseNum(row[ci]):0; });
+      out.deptData[mk]=deptArr; out.monthKeys.push(mk);
+      out.labels.push(mk.slice(0,3)+' '+mk.slice(-2));
+      out.applied.push( colMap.applied !==undefined?parseNum(row[colMap.applied]) :0);
+      out.approved.push(colMap.approved!==undefined?parseNum(row[colMap.approved]):0);
+      out.denied.push(  colMap.denied  !==undefined?parseNum(row[colMap.denied])  :0);
+      out.amount.push(  colMap.amount  !==undefined?parseNum(row[colMap.amount])  :0);
+      out.deptTotal.push(deptArr.reduce(function(s,v){return s+v;},0));
     }
-
     return out.monthKeys.length ? out : null;
   }
 
-  // ── Apply parsed data into live global arrays ─────────
   function applyParsed(p) {
-    if (!p || !p.monthKeys.length) return false;
-    function fill(arr, src) { if (!src || !src.length) return; arr.length = 0; src.forEach(function(v) { arr.push(v); }); }
-    Object.keys(DATA_2025).forEach(function(k) { delete DATA_2025[k]; });
+    if(!p||!p.monthKeys.length) return false;
+    function fill(arr,src){ if(!src||!src.length) return; arr.length=0; src.forEach(function(v){arr.push(v);}); }
+    Object.keys(DATA_2025).forEach(function(k){delete DATA_2025[k];});
     Object.assign(DATA_2025, p.deptData);
     fill(MONTHLY_APPLIED_2025,  p.applied);
     fill(MONTHLY_APPROVED_2025, p.approved);
     fill(MONTHLY_DENIED_2025,   p.denied);
     fill(MONTHLY_AMOUNT_2025,   p.amount);
     fill(MONTHLY_DEPT_TOTAL,    p.deptTotal);
-    if (p.labels.length) fill(ALL_MONTHS_LABELS, p.labels);
-    console.log('[SheetSync] ✅ Applied ' + p.monthKeys.length + ' months:', p.monthKeys.join(', '));
+    if(p.labels.length) fill(ALL_MONTHS_LABELS, p.labels);
+    console.log('[SheetSync] Applied '+p.monthKeys.length+' months: '+p.monthKeys.join(', '));
     return true;
   }
 
-  // ── Fetch from Apps Script Web App (real CORS headers) ──
-  function fetchFromAppsScript(thenInit) {
-    var timedOut = false;
+  // Simple fetch — calls our own Vercel proxy (/api/sheet), no CORS issues
+  function iframeFetch(thenInit) {
+    var done = false;
     var timer = setTimeout(function() {
-      timedOut = true;
+      if(done) return; done=true;
       console.warn('[SheetSync] Timeout — using hardcoded/cached data');
-      if (thenInit) safeInitAll();
+      if(thenInit) safeInitAll();
     }, TIMEOUT_MS);
 
     fetch(APPS_URL)
       .then(function(r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.text(); // HtmlService returns text/html — must parse manually
+        if(!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
       })
-      .then(function(text) {
-        clearTimeout(timer);
-        if (timedOut) return;
-        // Parse JSON — strip any HTML wrapper Google may add
-        var rows;
-        try { rows = JSON.parse(text); }
-        catch(e) {
-          var m = text.match(/(\[[\s\S]*\])/);
-          if (m) rows = JSON.parse(m[1]);
-          else throw new Error('Unparseable response: ' + text.slice(0, 200));
-        }
+      .then(function(rows) {
+        if(done) return; done=true; clearTimeout(timer);
         var parsed = processRows(rows);
-        if (parsed) {
-          try { localStorage.setItem(CACHE_KEY, JSON.stringify({ date: todayKey, parsed: parsed })); } catch(e) {}
-          if (thenInit) applyParsed(parsed);
-          if (typeof showToast === 'function' && thenInit) showToast('📊 Sheet data refreshed');
+        if(parsed) {
+          try { localStorage.setItem(CACHE_KEY, JSON.stringify({date:todayKey,parsed:parsed})); } catch(ex) {}
+          if(thenInit) applyParsed(parsed);
+          if(typeof showToast==='function' && thenInit) showToast('Sheet data refreshed');
         } else {
-          console.warn('[SheetSync] Could not parse sheet rows — check column headers. Using hardcoded data.');
+          console.warn('[SheetSync] Proxy responded but rows could not be parsed.');
         }
-        if (thenInit) safeInitAll();
+        if(thenInit) safeInitAll();
       })
       .catch(function(err) {
-        clearTimeout(timer);
-        if (timedOut) return;
-        console.warn('[SheetSync] Fetch error:', err);
-        if (thenInit) safeInitAll();
+        if(done) return; done=true; clearTimeout(timer);
+        console.warn('[SheetSync] Proxy fetch error:', err);
+        if(thenInit) safeInitAll();
       });
   }
 
-  // ── Main entry point ──────────────────────────────────
+  // Main
   try {
-    var cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
-    if (cached && cached.date === todayKey && cached.parsed) {
-      // ✅ Today's data in cache — render immediately
+    var cached = JSON.parse(localStorage.getItem(CACHE_KEY)||'null');
+    if(cached && cached.date===todayKey && cached.parsed) {
       applyParsed(cached.parsed);
-      console.log('[SheetSync] Using today\'s cached data');
+      console.log('[SheetSync] Using cached data for today');
       safeInitAll();
-      // Background refresh to catch intra-day sheet edits
-      fetchFromAppsScript(false);
+      iframeFetch(false); // background refresh
     } else {
-      // ⏳ Stale or first load — fetch before rendering
-      console.log('[SheetSync] Fetching from Apps Script…');
-      fetchFromAppsScript(true);
+      console.log('[SheetSync] Fetching via Vercel proxy (/api/sheet)...');
+      iframeFetch(true);
     }
   } catch(e) {
     console.warn('[SheetSync] Startup error:', e);
@@ -7196,10 +7158,6 @@ function buildDoctorRevenueSection() {
   }
 })();
 
-// ══════════════════════════════════════════════════════
-// ══════════════════════════════════════════════════
-// ══  INITIALISE ALL NEW FEATURES  ════════════════
-// ══════════════════════════════════════════════════
 function initAll() {
   // 0. Set initial filter to 'full' and prime DATA_MONTHS
   activeFilter = 'full';
