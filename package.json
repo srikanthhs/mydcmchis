@@ -1,0 +1,17 @@
+{
+  "name": "cmchis-dashboard",
+  "version": "1.0.0",
+  "description": "CMCHIS Dashboard",
+  "private": true,
+  "scripts": {
+    "build": "echo build complete",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "firebase-admin": "^12.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^37.0.0"
+  }
+}
