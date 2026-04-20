@@ -5685,7 +5685,81 @@ function deRefreshDashboard() {
       };});
     });
     if(typeof initAll==='function') initAll();
+    // ── Update all global chart objects with fresh data ──────────────────
+    deUpdateAllCharts();
   } catch(e){console.warn('[DataEntry] Refresh error:',e);}
+}
+
+// Update every global Chart.js instance that reads DATA_2025 / MONTHLY_* arrays
+function deUpdateAllCharts() {
+  try {
+    // 1. Main dept-by-month bar chart (Overview page)
+    if(typeof mainChartObj!=='undefined' && mainChartObj) {
+      var CHART_COLORS=['#1a73e888','#34a85388','#fbbc0488','#9c27b088','#00bcd488','#ff572288','#e91e6388','#60798b88','#8bc34a88','#ff980088','#79554888','#00897b88','#f4433688','#3f51b588'];
+      mainChartObj.data.datasets = ALL_MONTHS_KEYS.map(function(m,mi){return {
+        label: ALL_MONTHS_LABELS[mi],
+        data: DEPTS.map(function(_,i){return (DATA_2025[m]&&DATA_2025[m][i])||0;}),
+        backgroundColor: CHART_COLORS[mi%14],
+        borderRadius: 4
+      };});
+      mainChartObj.update('none');
+    }
+    // 2. Revenue by dept chart (Overview page)
+    if(typeof amtChartObj!=='undefined' && amtChartObj) {
+      amtChartObj.data.datasets[0].data = DEPTS.map(function(d,i){
+        return MONTHS_2025.reduce(function(s,m){return s+((DATA_2025[m]&&DATA_2025[m][i])||0);},0)*(DEPT_REV_RATE[d]||8000);
+      });
+      amtChartObj.update('none');
+    }
+    // 3. CMCHIS + IKT monthly patients combo (Overview page)
+    if(typeof window._patientsChart!=='undefined' && window._patientsChart) {
+      window._patientsChart.data.labels = ALL_MONTHS_LABELS.slice();
+      window._patientsChart.data.datasets[0].data = MONTHLY_APPROVED_2025.slice();
+      window._patientsChart.data.datasets[1].data = IKT_2025_APPROVED.slice();
+      window._patientsChart.update('none');
+    }
+    // 4. Combined revenue chart (Overview page)
+    if(typeof window._combinedRevChart!=='undefined' && window._combinedRevChart) {
+      window._combinedRevChart.data.labels = ALL_MONTHS_LABELS.slice();
+      window._combinedRevChart.data.datasets[0].data = MONTHLY_AMOUNT_2025.slice();
+      window._combinedRevChart.data.datasets[1].data = IKT_2025_APPROVED.map(function(v){return v*5000;});
+      window._combinedRevChart.update('none');
+    }
+    // 5. Department growth chart (Trends page)
+    if(typeof growthChartObj!=='undefined' && growthChartObj && typeof getGrowthData==='function') {
+      var gd=getGrowthData();
+      growthChartObj.data.datasets[0].data = gd;
+      growthChartObj.data.datasets[0].backgroundColor = gd.map(function(v){return v>=0?'#34a85388':'#ea433588';});
+      growthChartObj.update('none');
+    }
+    // 6. Dept revenue bar (Dept page)
+    if(typeof deptDenialChart!=='undefined' && deptDenialChart) {
+      deptDenialChart.data.datasets[0].data = DEPTS.map(function(d,i){
+        return MONTHS_2025.reduce(function(s,m){return s+((DATA_2025[m]&&DATA_2025[m][i])||0);},0)*(DEPT_REV_RATE[d]||8000);
+      });
+      deptDenialChart.update('none');
+    }
+    // 7. Dept annual revenue chart (Dept page)
+    if(typeof deptAmtAllChartObj!=='undefined' && deptAmtAllChartObj) {
+      deptAmtAllChartObj.data.datasets[0].data = DEPTS.map(function(d,i){
+        return MONTHS_2025.reduce(function(s,m){return s+((DATA_2025[m]&&DATA_2025[m][i])||0);},0)*(DEPT_REV_RATE[d]||8000);
+      });
+      deptAmtAllChartObj.update('none');
+    }
+    // 8. Re-render trend chart (Trends page)
+    if(typeof renderTrendChart==='function') renderTrendChart();
+    // 9. Re-build overview table and MoM summary (called once at init, need refresh)
+    if(typeof buildTable==='function') buildTable();
+    if(typeof buildMomSummary==='function') buildMomSummary();
+    // 10. Re-render active dept card
+    if(typeof showDept==='function') {
+      var activeTab=document.querySelector('#deptStrip .strip-tab.active');
+      var deptIdx=activeTab ? Array.from(document.querySelectorAll('#deptStrip .strip-tab')).indexOf(activeTab) : 0;
+      showDept(Math.max(0,deptIdx));
+    }
+    // 11. Re-run autoBindCardClicks after KPI grid is refreshed
+    if(typeof autoBindCardClicks==='function') setTimeout(autoBindCardClicks, 150);
+  } catch(ex){ console.warn('[DataEntry] Chart update error:',ex); }
 }
 
 // ══════════════════════════════════
@@ -8248,7 +8322,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
 // ══════════════════ GOOGLE SHEET AUTO-SYNC ══════════════════
-const GSHEET_URL = '/api/sheet';
+// Shared Apps Script URL — set once here for both sync paths.
+// Paste your Web App URL (Extensions → Apps Script → Deploy → New Deployment
+// → Web App, Execute as: Me, Access: Anyone).
+// Leave blank ('') to disable sync and suppress 404 errors.
+window.CMCHIS_APPS_SCRIPT_URL = '';   // ← paste URL here
+
+const GSHEET_URL = window.CMCHIS_APPS_SCRIPT_URL || '';
 
 // ── Sync state ──
 let _lastSyncTime = null;
@@ -8283,6 +8363,11 @@ function showToast(msg, dur) {
 }
 
 async function syncFromGSheet(silent) {
+  if (!GSHEET_URL) {
+    if (!silent) showToast('⚙️ No Apps Script URL configured — open the file and set CMCHIS_APPS_SCRIPT_URL');
+    _updateSyncBadge('idle', '⚙️ URL not set');
+    return;
+  }
   if (_syncInProgress) return;
   _syncInProgress = true;
   const btn = document.getElementById('gsyncBtn');
@@ -12440,7 +12525,11 @@ function buildDoctorRevenueSection() {
 // ══  GOOGLE SHEETS DAILY SYNC (JSONP — CORS-free)  ══
 // ══════════════════════════════════════════════════════
 (function setupSheetSync() {
-  var APPS_URL  = '/api/sheet';
+  // ── Paste your Google Apps Script Web App URL here ───────────────────
+  // Deploy: Extensions → Apps Script → Deploy → New Deployment → Web App
+  // (Execute as: Me, Access: Anyone)
+  var APPS_URL  = window.CMCHIS_APPS_SCRIPT_URL || '';
+  // ─────────────────────────────────────────────────────────────────────
   var CACHE_KEY = 'cmchis_gsheet_v9';
   var todayKey  = new Date().toISOString().slice(0, 10);
   var TIMEOUT_MS = 8000;
@@ -12513,8 +12602,13 @@ function buildDoctorRevenueSection() {
     return true;
   }
 
-  // Simple fetch — calls our own Vercel proxy (/api/sheet), no CORS issues
+  // Simple fetch — calls Google Apps Script Web App directly
   function iframeFetch(thenInit) {
+    if (!APPS_URL) {
+      // No Apps Script URL configured — skip silently, use hardcoded/cached data
+      if(thenInit) safeInitAll();
+      return;
+    }
     var done = false;
     var timer = setTimeout(function() {
       if(done) return; done=true;
@@ -12535,25 +12629,26 @@ function buildDoctorRevenueSection() {
           if(thenInit) applyParsed(parsed);
           if(typeof showToast==='function' && thenInit) showToast('Sheet data refreshed');
         } else {
-          console.warn('[SheetSync] Proxy responded but rows could not be parsed.');
+          console.warn('[SheetSync] Apps Script responded but rows could not be parsed.');
         }
         if(thenInit) safeInitAll();
       })
       .catch(function(err) {
         if(done) return; done=true; clearTimeout(timer);
-        console.warn('[SheetSync] Proxy fetch error:', err);
+        console.warn('[SheetSync] Apps Script fetch error:', err);
         if(thenInit) safeInitAll();
       });
   }
 
-  // Main — only fetch when actually deployed (not local / file://)
-  var isDeployed = (window.location.hostname !== 'localhost' &&
-                    window.location.hostname !== '127.0.0.1' &&
-                    !window.location.protocol.startsWith('file'));
+  // Main — skip fetch when no URL configured or running from file://
+  var isDeployed = APPS_URL !== '' &&
+                   window.location.hostname !== 'localhost' &&
+                   window.location.hostname !== '127.0.0.1' &&
+                   !window.location.protocol.startsWith('file');
   try {
     var cached = JSON.parse(localStorage.getItem(CACHE_KEY)||'null');
     if (!isDeployed) {
-      // Running locally — use cached/hardcoded data, no proxy fetch
+      // No URL configured or running locally — use cached/hardcoded data
       if (cached && cached.parsed) applyParsed(cached.parsed);
       safeInitAll();
     } else if(cached && cached.date===todayKey && cached.parsed) {
